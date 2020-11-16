@@ -21111,7 +21111,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (241:4) {#each fields as f}
+    // (242:4) {#each fields as f}
     function create_each_block(ctx) {
     	let field_1;
     	let current;
@@ -21154,7 +21154,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(241:4) {#each fields as f}",
+    		source: "(242:4) {#each fields as f}",
     		ctx
     	});
 
@@ -21435,85 +21435,85 @@ var app = (function () {
     			t78 = text("<");
     			t79 = text(/*className*/ ctx[2]);
     			t80 = text("s/>");
-    			add_location(h20, file$2, 199, 4, 4313);
-    			add_location(p0, file$2, 200, 4, 4333);
+    			add_location(h20, file$2, 200, 4, 4341);
+    			add_location(p0, file$2, 201, 4, 4361);
     			attr_dev(a0, "href", "https://nodejs.org/en/download/");
-    			add_location(a0, file$2, 202, 29, 4440);
-    			add_location(li0, file$2, 202, 4, 4415);
+    			add_location(a0, file$2, 203, 29, 4468);
+    			add_location(li0, file$2, 203, 4, 4443);
     			attr_dev(a1, "href", "https://www.dropbox.com/s/wbco7n4j835x49x/svelte-app.zip?dl=1");
-    			add_location(a1, file$2, 203, 28, 4527);
-    			add_location(i0, file$2, 203, 128, 4627);
-    			add_location(li1, file$2, 203, 4, 4503);
-    			add_location(i1, file$2, 204, 28, 4676);
-    			add_location(li2, file$2, 206, 12, 4746);
-    			add_location(li3, file$2, 207, 12, 4787);
+    			add_location(a1, file$2, 204, 28, 4555);
+    			add_location(i0, file$2, 204, 128, 4655);
+    			add_location(li1, file$2, 204, 4, 4531);
+    			add_location(i1, file$2, 205, 28, 4704);
+    			add_location(li2, file$2, 207, 12, 4774);
+    			add_location(li3, file$2, 208, 12, 4815);
     			attr_dev(ul0, "class", "sourcecode svelte-e7fcpv");
-    			add_location(ul0, file$2, 205, 8, 4710);
-    			add_location(li4, file$2, 204, 4, 4652);
-    			add_location(li5, file$2, 210, 4, 4844);
+    			add_location(ul0, file$2, 206, 8, 4738);
+    			add_location(li4, file$2, 205, 4, 4680);
+    			add_location(li5, file$2, 211, 4, 4872);
     			attr_dev(a2, "href", "https://firebase.google.com/docs/web/setup");
-    			add_location(a2, file$2, 211, 17, 4936);
-    			add_location(li6, file$2, 211, 4, 4923);
+    			add_location(a2, file$2, 212, 17, 4964);
+    			add_location(li6, file$2, 212, 4, 4951);
     			attr_dev(a3, "href", "https://www.dropbox.com/s/2afem5lbt5w020y/firestore.js?dl=1");
-    			add_location(a3, file$2, 212, 17, 5033);
-    			add_location(li7, file$2, 212, 4, 5020);
-    			add_location(i2, file$2, 213, 29, 5215);
-    			add_location(li8, file$2, 215, 8, 5274);
+    			add_location(a3, file$2, 213, 17, 5061);
+    			add_location(li7, file$2, 213, 4, 5048);
+    			add_location(i2, file$2, 214, 29, 5243);
+    			add_location(li8, file$2, 216, 8, 5302);
     			attr_dev(ul1, "class", "sourcecode svelte-e7fcpv");
-    			add_location(ul1, file$2, 214, 4, 5242);
-    			add_location(li9, file$2, 213, 4, 5190);
+    			add_location(ul1, file$2, 215, 4, 5270);
+    			add_location(li9, file$2, 214, 4, 5218);
     			attr_dev(a4, "href", "https://www.netlify.com/");
-    			add_location(a4, file$2, 218, 47, 5371);
-    			add_location(li10, file$2, 218, 4, 5328);
-    			add_location(ul2, file$2, 201, 4, 4406);
+    			add_location(a4, file$2, 219, 47, 5399);
+    			add_location(li10, file$2, 219, 4, 5356);
+    			add_location(ul2, file$2, 202, 4, 4434);
     			attr_dev(div0, "id", "step0");
     			attr_dev(div0, "class", "steps svelte-e7fcpv");
-    			add_location(div0, file$2, 198, 0, 4278);
-    			add_location(br0, file$2, 221, 0, 5444);
-    			add_location(h21, file$2, 223, 4, 5474);
-    			add_location(p1, file$2, 224, 4, 5494);
+    			add_location(div0, file$2, 199, 0, 4306);
+    			add_location(br0, file$2, 222, 0, 5472);
+    			add_location(h21, file$2, 224, 4, 5502);
+    			add_location(p1, file$2, 225, 4, 5522);
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$2, 227, 12, 5647);
-    			add_location(button0, file$2, 228, 12, 5702);
-    			add_location(form0, file$2, 226, 8, 5586);
+    			add_location(input0, file$2, 228, 12, 5675);
+    			add_location(button0, file$2, 229, 12, 5730);
+    			add_location(form0, file$2, 227, 8, 5614);
     			attr_dev(div1, "id", "nameofclass");
-    			add_location(div1, file$2, 225, 4, 5555);
-    			add_location(p2, file$2, 231, 4, 5766);
+    			add_location(div1, file$2, 226, 4, 5583);
+    			add_location(p2, file$2, 232, 4, 5794);
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file$2, 234, 12, 5903);
-    			add_location(button1, file$2, 235, 12, 5954);
-    			add_location(form1, file$2, 233, 8, 5848);
+    			add_location(input1, file$2, 235, 12, 5931);
+    			add_location(button1, file$2, 236, 12, 5982);
+    			add_location(form1, file$2, 234, 8, 5876);
     			attr_dev(div2, "id", "addField");
-    			add_location(div2, file$2, 232, 4, 5820);
+    			add_location(div2, file$2, 233, 4, 5848);
     			attr_dev(div3, "id", "users");
-    			add_location(div3, file$2, 239, 4, 6013);
+    			add_location(div3, file$2, 240, 4, 6041);
     			attr_dev(div4, "class", "steps svelte-e7fcpv");
-    			add_location(div4, file$2, 222, 0, 5450);
-    			add_location(br1, file$2, 245, 0, 6148);
-    			add_location(h22, file$2, 247, 4, 6178);
-    			add_location(i3, file$2, 248, 54, 6248);
-    			add_location(p3, file$2, 248, 4, 6198);
-    			add_location(button2, file$2, 249, 4, 6290);
-    			add_location(br2, file$2, 251, 13, 6360);
-    			add_location(button3, file$2, 252, 4, 6370);
+    			add_location(div4, file$2, 223, 0, 5478);
+    			add_location(br1, file$2, 246, 0, 6176);
+    			add_location(h22, file$2, 248, 4, 6206);
+    			add_location(i3, file$2, 249, 54, 6276);
+    			add_location(p3, file$2, 249, 4, 6226);
+    			add_location(button2, file$2, 250, 4, 6318);
+    			add_location(br2, file$2, 252, 13, 6388);
+    			add_location(button3, file$2, 253, 4, 6398);
     			attr_dev(div5, "class", "steps svelte-e7fcpv");
-    			add_location(div5, file$2, 246, 0, 6154);
-    			add_location(br3, file$2, 257, 0, 6523);
-    			add_location(h23, file$2, 259, 4, 6564);
-    			add_location(p4, file$2, 260, 4, 6584);
+    			add_location(div5, file$2, 247, 0, 6182);
+    			add_location(br3, file$2, 257, 0, 6480);
+    			add_location(h23, file$2, 259, 4, 6521);
+    			add_location(p4, file$2, 260, 4, 6541);
     			attr_dev(p5, "class", "sourcecode svelte-e7fcpv");
-    			add_location(p5, file$2, 261, 4, 6684);
+    			add_location(p5, file$2, 261, 4, 6641);
     			attr_dev(div6, "id", "step2");
     			attr_dev(div6, "class", "steps svelte-e7fcpv");
-    			add_location(div6, file$2, 258, 0, 6529);
-    			add_location(br4, file$2, 263, 0, 6764);
-    			add_location(h24, file$2, 265, 4, 6805);
-    			add_location(p6, file$2, 266, 4, 6825);
+    			add_location(div6, file$2, 258, 0, 6486);
+    			add_location(br4, file$2, 263, 0, 6721);
+    			add_location(h24, file$2, 265, 4, 6762);
+    			add_location(p6, file$2, 266, 4, 6782);
     			attr_dev(p7, "class", "sourcecode svelte-e7fcpv");
-    			add_location(p7, file$2, 267, 4, 6932);
+    			add_location(p7, file$2, 267, 4, 6889);
     			attr_dev(div7, "id", "step3");
     			attr_dev(div7, "class", "steps svelte-e7fcpv");
-    			add_location(div7, file$2, 264, 0, 6770);
+    			add_location(div7, file$2, 264, 0, 6727);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -21815,7 +21815,8 @@ ${getFieldsToResetAfterAddition()}
 <\/script>
 
 <!-- ###################### -->
-
+<h2>${className}s</h2>
+<br/>
 <div class="${classN}">
     <form on:submit|preventDefault={add${className}}>
 ${getInputsForAdd()}\t\t<button>Add</button>

@@ -63,7 +63,8 @@ ${getFieldsToResetAfterAddition()}
 <\/script>
 
 <!-- ###################### -->
-
+<h2>${className}s</h2>
+<br/>
 <div class="${classN}">
     <form on:submit|preventDefault={add${className}}>
 ${getInputsForAdd()}\t\t<button>Add</button>
@@ -254,12 +255,11 @@ function getGridTemplateColumns(){
     {button2Text}
     </button>
 </div>
-<!-- https://www.dropbox.com/s/wbco7n4j835x49x/svelte-app.zip?dl=0 -->
 <br/>
 <div id="step2" class="steps">
     <h2>Step 3</h2>
     <p>Add the following line between &lt;script&gt &lt/script&gt tags in your App.svelte file:</p>
-    <p class="sourcecode">import {className} from './{className}.svelte'</p>
+    <p class="sourcecode">import {className}s from './{className}s.svelte'</p>
 </div>
 <br/>
 <div id="step3" class="steps">
