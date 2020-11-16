@@ -211,7 +211,12 @@ function getGridTemplateColumns(){
     <li>now open a browser, and go to localhost:5000, and see if it works</li>
     <li>create a <a href="https://firebase.google.com/docs/web/setup">Firebase project</a> </li>
     <li>add this <a href="https://www.dropbox.com/s/2afem5lbt5w020y/firestore.js?dl=1">firestore.js</a> file to your src folder, and add your Firebase values to it.</li>
-    
+    <li>again in terminal at <i>myFolder</i>, type:
+    <ul class="sourcecode">
+        <li>npm install firebase</li>
+    </ul>
+    </li>
+    <li>for hosting your application, consider <a href="https://www.netlify.com/">Netlify.com</a></li>
     </ul>
 </div>
 <br/>
