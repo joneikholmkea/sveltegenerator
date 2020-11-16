@@ -7,7 +7,7 @@ import Generator from './Generator.svelte'
 </script>
 
 <h2>Svelte file generator ver. 0.3</h2>
-<h4>Will generate full CRUD functionality, using Firebase Cloud Firestore</h4>
+<h4>Will generate full CRUD functionality, using Firebase Cloud Firestore. <a href="https://screencast-o-matic.com/watch/cYXD0oLfJI">See 7-min video</a></h4>
 
 <Generator/>
 <p>Developed by <a href="mailto: joneikholm@gmail.com">Jon Eikholm</a> 2020</p>
