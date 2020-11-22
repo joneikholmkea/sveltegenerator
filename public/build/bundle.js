@@ -21107,21 +21107,21 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[19] = list[i];
+    	child_ctx[22] = list[i];
     	return child_ctx;
     }
 
-    // (242:4) {#each fields as f}
+    // (277:4) {#each fields as f}
     function create_each_block(ctx) {
     	let field_1;
     	let current;
 
     	field_1 = new Field({
-    			props: { fieldName: /*f*/ ctx[19] },
+    			props: { fieldName: /*f*/ ctx[22] },
     			$$inline: true
     		});
 
-    	field_1.$on("delete_field", /*deleteField*/ ctx[7]);
+    	field_1.$on("delete_field", /*deleteField*/ ctx[8]);
 
     	const block = {
     		c: function create() {
@@ -21133,7 +21133,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const field_1_changes = {};
-    			if (dirty & /*fields*/ 1) field_1_changes.fieldName = /*f*/ ctx[19];
+    			if (dirty & /*fields*/ 1) field_1_changes.fieldName = /*f*/ ctx[22];
     			field_1.$set(field_1_changes);
     		},
     		i: function intro(local) {
@@ -21154,7 +21154,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(242:4) {#each fields as f}",
+    		source: "(277:4) {#each fields as f}",
     		ctx
     	});
 
@@ -21211,7 +21211,7 @@ var app = (function () {
     	let t35;
     	let br0;
     	let t36;
-    	let div4;
+    	let div5;
     	let h21;
     	let t38;
     	let p1;
@@ -21234,47 +21234,53 @@ var app = (function () {
     	let t49;
     	let br1;
     	let t50;
-    	let div5;
-    	let h22;
+    	let div4;
+    	let span;
+    	let input2;
     	let t52;
-    	let p3;
-    	let t53;
-    	let i3;
-    	let t55;
-    	let t56;
-    	let button2;
-    	let t57;
-    	let t58;
     	let br2;
+    	let t53;
+    	let div6;
+    	let h22;
+    	let t55;
+    	let p3;
+    	let t56;
+    	let i3;
+    	let t58;
     	let t59;
-    	let button3;
+    	let button2;
     	let t60;
     	let t61;
     	let br3;
     	let t62;
-    	let div6;
-    	let h23;
+    	let button3;
+    	let t63;
     	let t64;
-    	let p4;
-    	let t66;
-    	let p5;
+    	let br4;
+    	let t65;
+    	let div7;
+    	let h23;
     	let t67;
-    	let t68;
+    	let p4;
     	let t69;
+    	let p5;
     	let t70;
     	let t71;
     	let t72;
-    	let br4;
     	let t73;
-    	let div7;
-    	let h24;
+    	let t74;
     	let t75;
-    	let p6;
-    	let t77;
-    	let p7;
+    	let br5;
+    	let t76;
+    	let div8;
+    	let h24;
     	let t78;
-    	let t79;
+    	let p6;
     	let t80;
+    	let p7;
+    	let t81;
+    	let t82;
+    	let t83;
     	let current;
     	let mounted;
     	let dispose;
@@ -21355,7 +21361,7 @@ var app = (function () {
     			t35 = space();
     			br0 = element("br");
     			t36 = space();
-    			div4 = element("div");
+    			div5 = element("div");
     			h21 = element("h2");
     			h21.textContent = "Step 1";
     			t38 = space();
@@ -21388,132 +21394,148 @@ var app = (function () {
     			t49 = space();
     			br1 = element("br");
     			t50 = space();
-    			div5 = element("div");
+    			div4 = element("div");
+    			span = element("span");
+    			span.textContent = "Add sorting on each field:   ";
+    			input2 = element("input");
+    			t52 = space();
+    			br2 = element("br");
+    			t53 = space();
+    			div6 = element("div");
     			h22 = element("h2");
     			h22.textContent = "Step 2";
-    			t52 = space();
+    			t55 = space();
     			p3 = element("p");
-    			t53 = text("Download these 2 files, and move them into the ");
+    			t56 = text("Download these 2 files, and move them into the ");
     			i3 = element("i");
     			i3.textContent = "src";
-    			t55 = text(" folder of your project");
-    			t56 = space();
-    			button2 = element("button");
-    			t57 = text(/*button1Text*/ ctx[3]);
-    			t58 = space();
-    			br2 = element("br");
+    			t58 = text(" folder of your project");
     			t59 = space();
-    			button3 = element("button");
-    			t60 = text(/*button2Text*/ ctx[4]);
+    			button2 = element("button");
+    			t60 = text(/*button1Text*/ ctx[3]);
     			t61 = space();
     			br3 = element("br");
     			t62 = space();
-    			div6 = element("div");
+    			button3 = element("button");
+    			t63 = text(/*button2Text*/ ctx[4]);
+    			t64 = space();
+    			br4 = element("br");
+    			t65 = space();
+    			div7 = element("div");
     			h23 = element("h2");
     			h23.textContent = "Step 3";
-    			t64 = space();
+    			t67 = space();
     			p4 = element("p");
     			p4.textContent = "Add the following line between <script> </script> tags in your App.svelte file:";
-    			t66 = space();
+    			t69 = space();
     			p5 = element("p");
-    			t67 = text("import ");
-    			t68 = text(/*className*/ ctx[2]);
-    			t69 = text(" from './");
-    			t70 = text(/*className*/ ctx[2]);
-    			t71 = text(".svelte'");
-    			t72 = space();
-    			br4 = element("br");
-    			t73 = space();
-    			div7 = element("div");
+    			t70 = text("import ");
+    			t71 = text(/*className*/ ctx[2]);
+    			t72 = text("s from './");
+    			t73 = text(/*className*/ ctx[2]);
+    			t74 = text("s.svelte'");
+    			t75 = space();
+    			br5 = element("br");
+    			t76 = space();
+    			div8 = element("div");
     			h24 = element("h2");
     			h24.textContent = "Step 4";
-    			t75 = space();
+    			t78 = space();
     			p6 = element("p");
     			p6.textContent = "Add the following line to your App.svelte file (outside the <script> </script> tags) :";
-    			t77 = space();
+    			t80 = space();
     			p7 = element("p");
-    			t78 = text("<");
-    			t79 = text(/*className*/ ctx[2]);
-    			t80 = text("s/>");
-    			add_location(h20, file$2, 200, 4, 4341);
-    			add_location(p0, file$2, 201, 4, 4361);
+    			t81 = text("<");
+    			t82 = text(/*className*/ ctx[2]);
+    			t83 = text("s/>");
+    			add_location(h20, file$2, 235, 4, 5397);
+    			add_location(p0, file$2, 236, 4, 5417);
     			attr_dev(a0, "href", "https://nodejs.org/en/download/");
-    			add_location(a0, file$2, 203, 29, 4468);
-    			add_location(li0, file$2, 203, 4, 4443);
+    			add_location(a0, file$2, 238, 29, 5524);
+    			add_location(li0, file$2, 238, 4, 5499);
     			attr_dev(a1, "href", "https://www.dropbox.com/s/wbco7n4j835x49x/svelte-app.zip?dl=1");
-    			add_location(a1, file$2, 204, 28, 4555);
-    			add_location(i0, file$2, 204, 128, 4655);
-    			add_location(li1, file$2, 204, 4, 4531);
-    			add_location(i1, file$2, 205, 28, 4704);
-    			add_location(li2, file$2, 207, 12, 4774);
-    			add_location(li3, file$2, 208, 12, 4815);
-    			attr_dev(ul0, "class", "sourcecode svelte-e7fcpv");
-    			add_location(ul0, file$2, 206, 8, 4738);
-    			add_location(li4, file$2, 205, 4, 4680);
-    			add_location(li5, file$2, 211, 4, 4872);
+    			add_location(a1, file$2, 239, 28, 5611);
+    			add_location(i0, file$2, 239, 128, 5711);
+    			add_location(li1, file$2, 239, 4, 5587);
+    			add_location(i1, file$2, 240, 28, 5760);
+    			add_location(li2, file$2, 242, 12, 5830);
+    			add_location(li3, file$2, 243, 12, 5871);
+    			attr_dev(ul0, "class", "sourcecode svelte-17y07s7");
+    			add_location(ul0, file$2, 241, 8, 5794);
+    			add_location(li4, file$2, 240, 4, 5736);
+    			add_location(li5, file$2, 246, 4, 5928);
     			attr_dev(a2, "href", "https://firebase.google.com/docs/web/setup");
-    			add_location(a2, file$2, 212, 17, 4964);
-    			add_location(li6, file$2, 212, 4, 4951);
+    			add_location(a2, file$2, 247, 17, 6020);
+    			add_location(li6, file$2, 247, 4, 6007);
     			attr_dev(a3, "href", "https://www.dropbox.com/s/2afem5lbt5w020y/firestore.js?dl=1");
-    			add_location(a3, file$2, 213, 17, 5061);
-    			add_location(li7, file$2, 213, 4, 5048);
-    			add_location(i2, file$2, 214, 29, 5243);
-    			add_location(li8, file$2, 216, 8, 5302);
-    			attr_dev(ul1, "class", "sourcecode svelte-e7fcpv");
-    			add_location(ul1, file$2, 215, 4, 5270);
-    			add_location(li9, file$2, 214, 4, 5218);
+    			add_location(a3, file$2, 248, 17, 6117);
+    			add_location(li7, file$2, 248, 4, 6104);
+    			add_location(i2, file$2, 249, 29, 6299);
+    			add_location(li8, file$2, 251, 8, 6358);
+    			attr_dev(ul1, "class", "sourcecode svelte-17y07s7");
+    			add_location(ul1, file$2, 250, 4, 6326);
+    			add_location(li9, file$2, 249, 4, 6274);
     			attr_dev(a4, "href", "https://www.netlify.com/");
-    			add_location(a4, file$2, 219, 47, 5399);
-    			add_location(li10, file$2, 219, 4, 5356);
-    			add_location(ul2, file$2, 202, 4, 4434);
+    			add_location(a4, file$2, 254, 47, 6455);
+    			add_location(li10, file$2, 254, 4, 6412);
+    			add_location(ul2, file$2, 237, 4, 5490);
     			attr_dev(div0, "id", "step0");
-    			attr_dev(div0, "class", "steps svelte-e7fcpv");
-    			add_location(div0, file$2, 199, 0, 4306);
-    			add_location(br0, file$2, 222, 0, 5472);
-    			add_location(h21, file$2, 224, 4, 5502);
-    			add_location(p1, file$2, 225, 4, 5522);
+    			attr_dev(div0, "class", "steps svelte-17y07s7");
+    			add_location(div0, file$2, 234, 0, 5362);
+    			add_location(br0, file$2, 257, 0, 6528);
+    			add_location(h21, file$2, 259, 4, 6558);
+    			add_location(p1, file$2, 260, 4, 6578);
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$2, 228, 12, 5675);
-    			add_location(button0, file$2, 229, 12, 5730);
-    			add_location(form0, file$2, 227, 8, 5614);
+    			add_location(input0, file$2, 263, 12, 6731);
+    			add_location(button0, file$2, 264, 12, 6786);
+    			add_location(form0, file$2, 262, 8, 6670);
     			attr_dev(div1, "id", "nameofclass");
-    			add_location(div1, file$2, 226, 4, 5583);
-    			add_location(p2, file$2, 232, 4, 5794);
+    			add_location(div1, file$2, 261, 4, 6639);
+    			add_location(p2, file$2, 267, 4, 6850);
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file$2, 235, 12, 5931);
-    			add_location(button1, file$2, 236, 12, 5982);
-    			add_location(form1, file$2, 234, 8, 5876);
+    			add_location(input1, file$2, 270, 12, 6987);
+    			add_location(button1, file$2, 271, 12, 7038);
+    			add_location(form1, file$2, 269, 8, 6932);
     			attr_dev(div2, "id", "addField");
-    			add_location(div2, file$2, 233, 4, 5848);
+    			add_location(div2, file$2, 268, 4, 6904);
     			attr_dev(div3, "id", "users");
-    			add_location(div3, file$2, 240, 4, 6041);
-    			attr_dev(div4, "class", "steps svelte-e7fcpv");
-    			add_location(div4, file$2, 223, 0, 5478);
-    			add_location(br1, file$2, 246, 0, 6176);
-    			add_location(h22, file$2, 248, 4, 6206);
-    			add_location(i3, file$2, 249, 54, 6276);
-    			add_location(p3, file$2, 249, 4, 6226);
-    			add_location(button2, file$2, 250, 4, 6318);
-    			add_location(br2, file$2, 252, 13, 6388);
-    			add_location(button3, file$2, 253, 4, 6398);
-    			attr_dev(div5, "class", "steps svelte-e7fcpv");
-    			add_location(div5, file$2, 247, 0, 6182);
-    			add_location(br3, file$2, 257, 0, 6480);
-    			add_location(h23, file$2, 259, 4, 6521);
-    			add_location(p4, file$2, 260, 4, 6541);
-    			attr_dev(p5, "class", "sourcecode svelte-e7fcpv");
-    			add_location(p5, file$2, 261, 4, 6641);
-    			attr_dev(div6, "id", "step2");
-    			attr_dev(div6, "class", "steps svelte-e7fcpv");
-    			add_location(div6, file$2, 258, 0, 6486);
-    			add_location(br4, file$2, 263, 0, 6721);
-    			add_location(h24, file$2, 265, 4, 6762);
-    			add_location(p6, file$2, 266, 4, 6782);
-    			attr_dev(p7, "class", "sourcecode svelte-e7fcpv");
-    			add_location(p7, file$2, 267, 4, 6889);
-    			attr_dev(div7, "id", "step3");
-    			attr_dev(div7, "class", "steps svelte-e7fcpv");
-    			add_location(div7, file$2, 264, 0, 6727);
+    			add_location(div3, file$2, 275, 4, 7097);
+    			add_location(br1, file$2, 280, 4, 7229);
+    			add_location(span, file$2, 282, 8, 7269);
+    			attr_dev(input2, "id", "sortingCB");
+    			attr_dev(input2, "type", "checkbox");
+    			attr_dev(input2, "class", "svelte-17y07s7");
+    			add_location(input2, file$2, 282, 65, 7326);
+    			attr_dev(div4, "id", "sortingDIV");
+    			attr_dev(div4, "class", "svelte-17y07s7");
+    			add_location(div4, file$2, 281, 4, 7239);
+    			attr_dev(div5, "class", "steps svelte-17y07s7");
+    			add_location(div5, file$2, 258, 0, 6534);
+    			add_location(br2, file$2, 285, 0, 7415);
+    			add_location(h22, file$2, 287, 4, 7445);
+    			add_location(i3, file$2, 288, 54, 7515);
+    			add_location(p3, file$2, 288, 4, 7465);
+    			add_location(button2, file$2, 289, 4, 7557);
+    			add_location(br3, file$2, 291, 13, 7627);
+    			add_location(button3, file$2, 292, 4, 7637);
+    			attr_dev(div6, "class", "steps svelte-17y07s7");
+    			add_location(div6, file$2, 286, 0, 7421);
+    			add_location(br4, file$2, 296, 0, 7719);
+    			add_location(h23, file$2, 298, 4, 7760);
+    			add_location(p4, file$2, 299, 4, 7780);
+    			attr_dev(p5, "class", "sourcecode svelte-17y07s7");
+    			add_location(p5, file$2, 300, 4, 7880);
+    			attr_dev(div7, "id", "step2");
+    			attr_dev(div7, "class", "steps svelte-17y07s7");
+    			add_location(div7, file$2, 297, 0, 7725);
+    			add_location(br5, file$2, 302, 0, 7962);
+    			add_location(h24, file$2, 304, 4, 8003);
+    			add_location(p6, file$2, 305, 4, 8023);
+    			attr_dev(p7, "class", "sourcecode svelte-17y07s7");
+    			add_location(p7, file$2, 306, 4, 8130);
+    			attr_dev(div8, "id", "step3");
+    			attr_dev(div8, "class", "steps svelte-17y07s7");
+    			add_location(div8, file$2, 303, 0, 7968);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -21568,87 +21590,95 @@ var app = (function () {
     			insert_dev(target, t35, anchor);
     			insert_dev(target, br0, anchor);
     			insert_dev(target, t36, anchor);
-    			insert_dev(target, div4, anchor);
-    			append_dev(div4, h21);
-    			append_dev(div4, t38);
-    			append_dev(div4, p1);
-    			append_dev(div4, t40);
-    			append_dev(div4, div1);
+    			insert_dev(target, div5, anchor);
+    			append_dev(div5, h21);
+    			append_dev(div5, t38);
+    			append_dev(div5, p1);
+    			append_dev(div5, t40);
+    			append_dev(div5, div1);
     			append_dev(div1, form0);
     			append_dev(form0, input0);
     			set_input_value(input0, /*className*/ ctx[2]);
     			append_dev(form0, t41);
     			append_dev(form0, button0);
-    			append_dev(div4, t43);
-    			append_dev(div4, p2);
-    			append_dev(div4, t45);
-    			append_dev(div4, div2);
+    			append_dev(div5, t43);
+    			append_dev(div5, p2);
+    			append_dev(div5, t45);
+    			append_dev(div5, div2);
     			append_dev(div2, form1);
     			append_dev(form1, input1);
     			set_input_value(input1, /*field*/ ctx[1]);
     			append_dev(form1, t46);
     			append_dev(form1, button1);
-    			append_dev(div4, t48);
-    			append_dev(div4, div3);
+    			append_dev(div5, t48);
+    			append_dev(div5, div3);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(div3, null);
     			}
 
-    			insert_dev(target, t49, anchor);
-    			insert_dev(target, br1, anchor);
-    			insert_dev(target, t50, anchor);
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, h22);
-    			append_dev(div5, t52);
-    			append_dev(div5, p3);
-    			append_dev(p3, t53);
-    			append_dev(p3, i3);
-    			append_dev(p3, t55);
-    			append_dev(div5, t56);
-    			append_dev(div5, button2);
-    			append_dev(button2, t57);
-    			append_dev(button2, t58);
-    			append_dev(div5, br2);
-    			append_dev(div5, t59);
-    			append_dev(div5, button3);
-    			append_dev(button3, t60);
-    			insert_dev(target, t61, anchor);
-    			insert_dev(target, br3, anchor);
-    			insert_dev(target, t62, anchor);
+    			append_dev(div5, t49);
+    			append_dev(div5, br1);
+    			append_dev(div5, t50);
+    			append_dev(div5, div4);
+    			append_dev(div4, span);
+    			append_dev(div4, input2);
+    			input2.checked = /*sortingCBvalue*/ ctx[5];
+    			insert_dev(target, t52, anchor);
+    			insert_dev(target, br2, anchor);
+    			insert_dev(target, t53, anchor);
     			insert_dev(target, div6, anchor);
-    			append_dev(div6, h23);
-    			append_dev(div6, t64);
-    			append_dev(div6, p4);
-    			append_dev(div6, t66);
-    			append_dev(div6, p5);
-    			append_dev(p5, t67);
-    			append_dev(p5, t68);
-    			append_dev(p5, t69);
+    			append_dev(div6, h22);
+    			append_dev(div6, t55);
+    			append_dev(div6, p3);
+    			append_dev(p3, t56);
+    			append_dev(p3, i3);
+    			append_dev(p3, t58);
+    			append_dev(div6, t59);
+    			append_dev(div6, button2);
+    			append_dev(button2, t60);
+    			append_dev(button2, t61);
+    			append_dev(div6, br3);
+    			append_dev(div6, t62);
+    			append_dev(div6, button3);
+    			append_dev(button3, t63);
+    			insert_dev(target, t64, anchor);
+    			insert_dev(target, br4, anchor);
+    			insert_dev(target, t65, anchor);
+    			insert_dev(target, div7, anchor);
+    			append_dev(div7, h23);
+    			append_dev(div7, t67);
+    			append_dev(div7, p4);
+    			append_dev(div7, t69);
+    			append_dev(div7, p5);
     			append_dev(p5, t70);
     			append_dev(p5, t71);
-    			insert_dev(target, t72, anchor);
-    			insert_dev(target, br4, anchor);
-    			insert_dev(target, t73, anchor);
-    			insert_dev(target, div7, anchor);
-    			append_dev(div7, h24);
-    			append_dev(div7, t75);
-    			append_dev(div7, p6);
-    			append_dev(div7, t77);
-    			append_dev(div7, p7);
-    			append_dev(p7, t78);
-    			append_dev(p7, t79);
-    			append_dev(p7, t80);
+    			append_dev(p5, t72);
+    			append_dev(p5, t73);
+    			append_dev(p5, t74);
+    			insert_dev(target, t75, anchor);
+    			insert_dev(target, br5, anchor);
+    			insert_dev(target, t76, anchor);
+    			insert_dev(target, div8, anchor);
+    			append_dev(div8, h24);
+    			append_dev(div8, t78);
+    			append_dev(div8, p6);
+    			append_dev(div8, t80);
+    			append_dev(div8, p7);
+    			append_dev(p7, t81);
+    			append_dev(p7, t82);
+    			append_dev(p7, t83);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[10]),
-    					listen_dev(form0, "submit", prevent_default(/*addNameOfClass*/ ctx[5]), false, true, false),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[11]),
-    					listen_dev(form1, "submit", prevent_default(/*addField*/ ctx[6]), false, true, false),
-    					listen_dev(button2, "click", /*generateEntityFile*/ ctx[9], false, false, false),
-    					listen_dev(button3, "click", /*generateCollectionFile*/ ctx[8], false, false, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[11]),
+    					listen_dev(form0, "submit", prevent_default(/*addNameOfClass*/ ctx[6]), false, true, false),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[12]),
+    					listen_dev(form1, "submit", prevent_default(/*addField*/ ctx[7]), false, true, false),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[13]),
+    					listen_dev(button2, "click", /*generateEntityFile*/ ctx[10], false, false, false),
+    					listen_dev(button3, "click", /*generateCollectionFile*/ ctx[9], false, false, false)
     				];
 
     				mounted = true;
@@ -21663,7 +21693,7 @@ var app = (function () {
     				set_input_value(input1, /*field*/ ctx[1]);
     			}
 
-    			if (dirty & /*fields, deleteField*/ 129) {
+    			if (dirty & /*fields, deleteField*/ 257) {
     				each_value = /*fields*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -21691,11 +21721,15 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty & /*button1Text*/ 8) set_data_dev(t57, /*button1Text*/ ctx[3]);
-    			if (!current || dirty & /*button2Text*/ 16) set_data_dev(t60, /*button2Text*/ ctx[4]);
-    			if (!current || dirty & /*className*/ 4) set_data_dev(t68, /*className*/ ctx[2]);
-    			if (!current || dirty & /*className*/ 4) set_data_dev(t70, /*className*/ ctx[2]);
-    			if (!current || dirty & /*className*/ 4) set_data_dev(t79, /*className*/ ctx[2]);
+    			if (dirty & /*sortingCBvalue*/ 32) {
+    				input2.checked = /*sortingCBvalue*/ ctx[5];
+    			}
+
+    			if (!current || dirty & /*button1Text*/ 8) set_data_dev(t60, /*button1Text*/ ctx[3]);
+    			if (!current || dirty & /*button2Text*/ 16) set_data_dev(t63, /*button2Text*/ ctx[4]);
+    			if (!current || dirty & /*className*/ 4) set_data_dev(t71, /*className*/ ctx[2]);
+    			if (!current || dirty & /*className*/ 4) set_data_dev(t73, /*className*/ ctx[2]);
+    			if (!current || dirty & /*className*/ 4) set_data_dev(t82, /*className*/ ctx[2]);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -21720,20 +21754,20 @@ var app = (function () {
     			if (detaching) detach_dev(t35);
     			if (detaching) detach_dev(br0);
     			if (detaching) detach_dev(t36);
-    			if (detaching) detach_dev(div4);
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(t49);
-    			if (detaching) detach_dev(br1);
-    			if (detaching) detach_dev(t50);
     			if (detaching) detach_dev(div5);
-    			if (detaching) detach_dev(t61);
-    			if (detaching) detach_dev(br3);
-    			if (detaching) detach_dev(t62);
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(t52);
+    			if (detaching) detach_dev(br2);
+    			if (detaching) detach_dev(t53);
     			if (detaching) detach_dev(div6);
-    			if (detaching) detach_dev(t72);
+    			if (detaching) detach_dev(t64);
     			if (detaching) detach_dev(br4);
-    			if (detaching) detach_dev(t73);
+    			if (detaching) detach_dev(t65);
     			if (detaching) detach_dev(div7);
+    			if (detaching) detach_dev(t75);
+    			if (detaching) detach_dev(br5);
+    			if (detaching) detach_dev(t76);
+    			if (detaching) detach_dev(div8);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -21755,6 +21789,15 @@ var app = (function () {
     	window.saveAs(blob, filename);
     }
 
+    function cap(string) {
+    	return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function sortByField(link) {
+    	console.log("clicked");
+    	console.log(link);
+    }
+
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Generator", slots, []);
@@ -21763,6 +21806,7 @@ var app = (function () {
     	let className = "Person";
     	let button1Text = "Download file: " + className + ".svelte";
     	let button2Text = "Download file: " + className + "s.svelte";
+    	let sortingCBvalue = false;
 
     	function addNameOfClass() {
     		console.log("saved class " + className);
@@ -21794,6 +21838,7 @@ var app = (function () {
     	}
 
     	function generateCollectionFile() {
+    		console.log("is checked: " + sortingCBvalue);
     		let classN = className.toLowerCase();
 
     		let src = `
@@ -21803,9 +21848,15 @@ import ${className} from './${className}.svelte'
 let ${classN}s = []
 ${getClassVariables()}
 
-db.collection('${classN}s').onSnapshot(data => {
+db.collection('${classN}s').orderBy("${fields[0]}").onSnapshot(data => {
     ${classN}s = data.docs
 })
+
+function sortByField(field){
+    db.collection('${classN}s').orderBy(field).onSnapshot(data => {
+        ${classN}s = data.docs
+    })
+}
 
 function add${className}(){
     db.collection('${classN}s').add({${getFieldListAsString()}})
@@ -21825,6 +21876,8 @@ ${getInputsForAdd()}\t\t<button>Add</button>
 
 
 <div>
+
+${getSortForFields()}
 {#each ${classN}s as ${classN}}
     <${className} id={${classN}.id} ${classN}={${classN}.data()} />
 {/each}
@@ -21833,7 +21886,7 @@ ${getInputsForAdd()}\t\t<button>Add</button>
 <!-- ###################### -->
 
 <style>
-.${classN} form {
+#sortSection form, .${classN} form {
     display: grid;
     ${getGridTemplateColumns()}
     grid-gap: 10px;
@@ -21873,7 +21926,7 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
 <!-- ###################### -->
 
 <style>
-.${classN} {
+.${classN} form {
     display: grid;
     ${getGridTemplateColumns()}
     grid-gap: 10px;
@@ -21915,6 +21968,27 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		return out;
     	}
 
+    	function getSortForFields() {
+    		if (!sortingCBvalue) {
+    			// if user did not select the "sorting" checkbox
+    			return "";
+    		}
+
+    		let out = "<div id=\"sortSection\"><form>";
+
+    		for (let i = 0; i < fields.length; i++) {
+    			out += "\t<a on:click={() => sortByField(\"" + fields[i] + "\")} href=\"#\" ><h3>" + cap(fields[i]) + "</h3></a>";
+    		}
+
+    		for (let i = 0; i < 2; i++) {
+    			out += "\t<div></div>";
+    		}
+
+    		out += "</form></div>";
+    		return out;
+    	}
+
+    	// <a on:click={() => sortByField("Username")} href="#" value="hey">TRY THIS</a>
     	function getInputsForAdd() {
     		let out = "";
 
@@ -21973,6 +22047,11 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		$$invalidate(1, field);
     	}
 
+    	function input2_change_handler() {
+    		sortingCBvalue = this.checked;
+    		$$invalidate(5, sortingCBvalue);
+    	}
+
     	$$self.$capture_state = () => ({
     		User,
     		Field,
@@ -21982,6 +22061,7 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		className,
     		button1Text,
     		button2Text,
+    		sortingCBvalue,
     		addNameOfClass,
     		addField,
     		publishFile,
@@ -21991,10 +22071,13 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		getFieldListAsString,
     		getClassVariables,
     		getInputs,
+    		getSortForFields,
     		getInputsForAdd,
     		getFieldsToResetAfterAddition,
     		getButtons,
-    		getGridTemplateColumns
+    		getGridTemplateColumns,
+    		cap,
+    		sortByField
     	});
 
     	$$self.$inject_state = $$props => {
@@ -22003,6 +22086,7 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		if ("className" in $$props) $$invalidate(2, className = $$props.className);
     		if ("button1Text" in $$props) $$invalidate(3, button1Text = $$props.button1Text);
     		if ("button2Text" in $$props) $$invalidate(4, button2Text = $$props.button2Text);
+    		if ("sortingCBvalue" in $$props) $$invalidate(5, sortingCBvalue = $$props.sortingCBvalue);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -22015,13 +22099,15 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		className,
     		button1Text,
     		button2Text,
+    		sortingCBvalue,
     		addNameOfClass,
     		addField,
     		deleteField,
     		generateCollectionFile,
     		generateEntityFile,
     		input0_input_handler,
-    		input1_input_handler
+    		input1_input_handler,
+    		input2_change_handler
     	];
     }
 
@@ -22045,18 +22131,22 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     function create_fragment$3(ctx) {
     	let h2;
     	let t1;
-    	let h4;
-    	let t3;
-    	let generator;
+    	let h3;
+    	let t2;
+    	let a0;
     	let t4;
     	let p0;
-    	let t5;
-    	let a0;
+    	let t6;
+    	let generator;
     	let t7;
-    	let t8;
     	let p1;
-    	let t9;
+    	let t8;
     	let a1;
+    	let t10;
+    	let t11;
+    	let p2;
+    	let t12;
+    	let a2;
     	let current;
     	generator = new Generator({ $$inline: true });
 
@@ -22065,29 +22155,37 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     			h2 = element("h2");
     			h2.textContent = "Svelte file generator ver. 0.3";
     			t1 = space();
-    			h4 = element("h4");
-    			h4.textContent = "Will generate full CRUD functionality, using Firebase Cloud Firestore";
-    			t3 = space();
-    			create_component(generator.$$.fragment);
+    			h3 = element("h3");
+    			t2 = text("Will generate full CRUD functionality, using Firebase Cloud Firestore. ");
+    			a0 = element("a");
+    			a0.textContent = "See 7-min video";
     			t4 = space();
     			p0 = element("p");
-    			t5 = text("Developed by ");
-    			a0 = element("a");
-    			a0.textContent = "Jon Eikholm";
-    			t7 = text(" 2020");
-    			t8 = space();
+    			p0.textContent = "This is meant to be a starting point for your web application. And when you need to add to existing projects.";
+    			t6 = space();
+    			create_component(generator.$$.fragment);
+    			t7 = space();
     			p1 = element("p");
-    			t9 = text("Inspired by ");
+    			t8 = text("Developed by ");
     			a1 = element("a");
-    			a1.textContent = "Coders Page";
-    			add_location(h2, file$3, 8, 0, 104);
-    			add_location(h4, file$3, 9, 0, 144);
-    			attr_dev(a0, "href", "mailto: joneikholm@gmail.com");
-    			add_location(a0, file$3, 12, 16, 253);
-    			add_location(p0, file$3, 12, 0, 237);
-    			attr_dev(a1, "href", "https://www.youtube.com/watch?v=Rr2kKjYIYRM");
-    			add_location(a1, file$3, 13, 15, 332);
-    			add_location(p1, file$3, 13, 0, 317);
+    			a1.textContent = "Jon Eikholm";
+    			t10 = text(" 2020");
+    			t11 = space();
+    			p2 = element("p");
+    			t12 = text("Inspired by ");
+    			a2 = element("a");
+    			a2.textContent = "Coders Page";
+    			add_location(h2, file$3, 9, 0, 148);
+    			attr_dev(a0, "href", "https://screencast-o-matic.com/watch/cYXD0oLfJI");
+    			add_location(a0, file$3, 10, 75, 263);
+    			add_location(h3, file$3, 10, 0, 188);
+    			add_location(p0, file$3, 11, 0, 346);
+    			attr_dev(a1, "href", "mailto: joneikholm@gmail.com");
+    			add_location(a1, file$3, 13, 16, 492);
+    			add_location(p1, file$3, 13, 0, 476);
+    			attr_dev(a2, "href", "https://www.youtube.com/watch?v=Rr2kKjYIYRM");
+    			add_location(a2, file$3, 14, 15, 571);
+    			add_location(p2, file$3, 14, 0, 556);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -22095,18 +22193,22 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
     			insert_dev(target, t1, anchor);
-    			insert_dev(target, h4, anchor);
-    			insert_dev(target, t3, anchor);
-    			mount_component(generator, target, anchor);
+    			insert_dev(target, h3, anchor);
+    			append_dev(h3, t2);
+    			append_dev(h3, a0);
     			insert_dev(target, t4, anchor);
     			insert_dev(target, p0, anchor);
-    			append_dev(p0, t5);
-    			append_dev(p0, a0);
-    			append_dev(p0, t7);
-    			insert_dev(target, t8, anchor);
+    			insert_dev(target, t6, anchor);
+    			mount_component(generator, target, anchor);
+    			insert_dev(target, t7, anchor);
     			insert_dev(target, p1, anchor);
-    			append_dev(p1, t9);
+    			append_dev(p1, t8);
     			append_dev(p1, a1);
+    			append_dev(p1, t10);
+    			insert_dev(target, t11, anchor);
+    			insert_dev(target, p2, anchor);
+    			append_dev(p2, t12);
+    			append_dev(p2, a2);
     			current = true;
     		},
     		p: noop,
@@ -22122,13 +22224,15 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(h2);
     			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(h4);
-    			if (detaching) detach_dev(t3);
-    			destroy_component(generator, detaching);
+    			if (detaching) detach_dev(h3);
     			if (detaching) detach_dev(t4);
     			if (detaching) detach_dev(p0);
-    			if (detaching) detach_dev(t8);
+    			if (detaching) detach_dev(t6);
+    			destroy_component(generator, detaching);
+    			if (detaching) detach_dev(t7);
     			if (detaching) detach_dev(p1);
+    			if (detaching) detach_dev(t11);
+    			if (detaching) detach_dev(p2);
     		}
     	};
 

@@ -7,6 +7,7 @@ let field = 'Name'
 let className = 'Person'
 let button1Text = 'Download file: '+className+'.svelte'
 let button2Text = 'Download file: '+className+'s.svelte'
+let sortingCBvalue = false;
 
 
 function addNameOfClass(){
@@ -43,7 +44,12 @@ function deleteField(field){
 }
 
 function generateCollectionFile(){
+    console.log("is checked: " + sortingCBvalue)
     let classN = className.toLowerCase()
+      let sortHTML = 'empty'
+    if(sortingCBvalue){
+        sortHTML = ''
+    }
     let src = `
 <script>
 import {db} from './firestore.js'
@@ -51,9 +57,15 @@ import ${className} from './${className}.svelte'
 let ${classN}s = []
 ${getClassVariables()}
 
-db.collection('${classN}s').onSnapshot(data => {
+db.collection('${classN}s').orderBy("${fields[0]}").onSnapshot(data => {
     ${classN}s = data.docs
 })
+
+function sortByField(field){
+    db.collection('${classN}s').orderBy(field).onSnapshot(data => {
+        ${classN}s = data.docs
+    })
+}
 
 function add${className}(){
     db.collection('${classN}s').add({${getFieldListAsString()}})
@@ -73,6 +85,8 @@ ${getInputsForAdd()}\t\t<button>Add</button>
 
 
 <div>
+
+${getSortForFields()}
 {#each ${classN}s as ${classN}}
     <${className} id={${classN}.id} ${classN}={${classN}.data()} />
 {/each}
@@ -81,7 +95,7 @@ ${getInputsForAdd()}\t\t<button>Add</button>
 <!-- ###################### -->
 
 <style>
-.${classN} form {
+#sortSection form, .${classN} form {
     display: grid;
     ${getGridTemplateColumns()}
     grid-gap: 10px;
@@ -119,7 +133,7 @@ ${inputs}\t<button on:click={delete${className}}>Delete</button>
 <!-- ###################### -->
 
 <style>
-.${classN} {
+.${classN} form {
     display: grid;
     ${getGridTemplateColumns()}
     grid-gap: 10px;
@@ -157,6 +171,21 @@ function getInputs(){
     return out
 }
 
+function getSortForFields(){
+    if(!sortingCBvalue){ // if user did not select the "sorting" checkbox
+        return ''
+    }
+    let out = '<div id="sortSection"><form>'
+    for(let i=0; i<fields.length; i++){
+        out +=  '\t<a on:click={() => sortByField("'+ fields[i] +'")} href="#" ><h3>' + cap(fields[i]) + '</h3></a>'
+    }
+     for(let i=0; i<2; i++){
+        out +=  '\t<div></div>'
+    }
+    out += '</form></div>'
+    return out
+}
+// <a on:click={() => sortByField("Username")} href="#" value="hey">TRY THIS</a>
 function getInputsForAdd(){
     let out = ''
     for(let i=0; i<fields.length; i++){
@@ -172,9 +201,6 @@ function getFieldsToResetAfterAddition(){
     }
     return out
 }
-
-
-
 
 function getButtons(){
     let out = ''
@@ -192,6 +218,15 @@ function getGridTemplateColumns(){
     }
     out += '2fr 2fr;'
     return out
+}
+
+function cap(string){
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+function sortByField(link){
+    console.log("clicked")
+    console.log(link)
 }
 
 </script>
@@ -243,6 +278,10 @@ function getGridTemplateColumns(){
         <Field fieldName = {f} on:delete_field={deleteField} />
     {/each}
     </div>
+    <br/>
+    <div id="sortingDIV">
+        <span>Add sorting on each field:&nbsp;&nbsp;&nbsp;</span><input id="sortingCB" type="checkbox" bind:checked={sortingCBvalue} />
+    </div>
 </div>
 <br/>
 <div class="steps">
@@ -278,6 +317,14 @@ function getGridTemplateColumns(){
     border-style: solid;
     border-width: 1px;
      border-color:black;
+}
+
+#sortingCB{
+    transform : scale(2); 
+}
+#sortingDIV{
+    margin-bottom: 10px;
+    
 }
 
 
