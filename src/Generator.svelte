@@ -1,14 +1,14 @@
 <script>
-import User from './User.svelte'
 import Field from './Field.svelte'
 import { saveAs } from 'file-saver';
+import {generateCollectionFile} from './js/collection.js'
+import {generateEntityFile} from './js/entity.js'
 let fields = ["name", "email"]
 let field = 'Name'
 let className = 'Person'
 let button1Text = 'Download file: '+className+'.svelte'
 let button2Text = 'Download file: '+className+'s.svelte'
 let sortingCBvalue = false;
-
 
 function addNameOfClass(){
         console.log("saved class " + className)
@@ -20,12 +20,7 @@ function addField(){
     fields.push(field)
     fields = fields
     console.log("added field " + field)
-}
-
-
-function publishFile(content, filename){
-    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-    window.saveAs(blob, filename);
+    field = ''
 }
 
 function deleteField(field){
@@ -43,192 +38,10 @@ function deleteField(field){
     }
 }
 
-function generateCollectionFile(){
-    console.log("is checked: " + sortingCBvalue)
-    let classN = className.toLowerCase()
-      let sortHTML = 'empty'
-    if(sortingCBvalue){
-        sortHTML = ''
-    }
-    let src = `
-<script>
-import {db} from './firestore.js'
-import ${className} from './${className}.svelte'
-let ${classN}s = []
-${getClassVariables()}
-
-db.collection('${classN}s').orderBy("${fields[0]}").onSnapshot(data => {
-    ${classN}s = data.docs
-})
-
-function sortByField(field){
-    db.collection('${classN}s').orderBy(field).onSnapshot(data => {
-        ${classN}s = data.docs
-    })
+function publishFile(content, filename){
+    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    window.saveAs(blob, filename);
 }
-
-function add${className}(){
-    db.collection('${classN}s').add({${getFieldListAsString()}})
-    // Firebase will automatically map to relevant names !!
-${getFieldsToResetAfterAddition()}
-}
-<\/script>
-
-<!-- ###################### -->
-<h2>${className}s</h2>
-<br/>
-<div class="${classN}">
-    <form on:submit|preventDefault={add${className}}>
-${getInputsForAdd()}\t\t<button>Add</button>
-    </form>
-</div>
-
-
-<div>
-
-${getSortForFields()}
-{#each ${classN}s as ${classN}}
-    <${className} id={${classN}.id} ${classN}={${classN}.data()} />
-{/each}
-</div>
-
-<!-- ###################### -->
-
-<style>
-#sortSection form, .${classN} form {
-    display: grid;
-    ${getGridTemplateColumns()}
-    grid-gap: 10px;
-}
-</style>
-`
-console.log(src)
-publishFile(src, className+"s.svelte")
-}
-
-function generateEntityFile(){
-    let classN = className.toLowerCase()
-    let inputs = getInputs()
-    let src = `
-<script>
-import {db} from './firestore.js'
-export let id = ''
-export let ${classN} = {}
-
-function delete${className}(){
-    db.collection('${classN}s').doc(id).delete()
-}
-
-function update${className}(){
-    db.collection('${classN}s').doc(id).update(${classN})
-}
-
-<\/script>
-
-<div class="${classN}">
-${inputs}\t<button on:click={delete${className}}>Delete</button>
-\t<button on:click={update${className}}>Update</button>
-</div>
-
-<!-- ###################### -->
-
-<style>
-.${classN} form {
-    display: grid;
-    ${getGridTemplateColumns()}
-    grid-gap: 10px;
-}
-</style>
-`
-console.log(src)
-publishFile(src, className+".svelte")
-}
-
-
-function getFieldListAsString(){
-    let out = ''
-    for(let i=0; i<fields.length; i++){
-        out +=  fields[i] + ', '
-    }
-
-    return out.substring(0, out.length - 2);
-}
-
-function getClassVariables(){
-    let out = ''
-    for(let i=0; i<fields.length; i++){
-        out +=  'let '+ fields[i] +' = \'\'\n'
-    }
-    return out
-}
-
-
-function getInputs(){
-    let out = ''
-    for(let i=0; i<fields.length; i++){
-        out +=  '\t<input type="text" bind:value="{'+className.toLowerCase()+'.'+fields[i]+'}">\n'
-    }
-    return out
-}
-
-function getSortForFields(){
-    if(!sortingCBvalue){ // if user did not select the "sorting" checkbox
-        return ''
-    }
-    let out = '<div id="sortSection"><form>'
-    for(let i=0; i<fields.length; i++){
-        out +=  '\t<a on:click={() => sortByField("'+ fields[i] +'")} href="#" ><h3>' + cap(fields[i]) + '</h3></a>'
-    }
-     for(let i=0; i<2; i++){
-        out +=  '\t<div></div>'
-    }
-    out += '</form></div>'
-    return out
-}
-// <a on:click={() => sortByField("Username")} href="#" value="hey">TRY THIS</a>
-function getInputsForAdd(){
-    let out = ''
-    for(let i=0; i<fields.length; i++){
-        out +=  '\t\t<input type="text" placeholder="'+fields[i]+'" bind:value={'+fields[i]+'}>\n'
-    }
-    return out
-}
-
-function getFieldsToResetAfterAddition(){
-    let out = ''
-    for(let i=0; i<fields.length; i++){
-        out +=  '\t'+fields[i] +' = \'\'\n'
-    }
-    return out
-}
-
-function getButtons(){
-    let out = ''
-    for(let i=0; i<fields.length; i++){
-        out +=  '<input type="text" bind:value="{'+className.toLowerCase()+'.'+fields[i]+'}">\n'
-    }
-    return out
-}
-
-function getGridTemplateColumns(){
-    let fraction = 12 / fields.length
-    let out = 'grid-template-columns: '
-    for(let i=0; i<fields.length; i++){
-        out += fraction+'fr '
-    }
-    out += '2fr 2fr;'
-    return out
-}
-
-function cap(string){
-    return string.charAt(0).toUpperCase() + string.slice(1)
-}
-
-function sortByField(link){
-    console.log("clicked")
-    console.log(link)
-}
-
 </script>
 
 <!-- ###################### -->
@@ -287,10 +100,10 @@ function sortByField(link){
 <div class="steps">
     <h2>Step 2</h2>
     <p>Download these 2 files, and move them into the <i>src</i> folder of your project</p>
-    <button on:click={generateEntityFile}>
+    <button on:click={() => generateEntityFile(className, fields, publishFile)}>
     {button1Text}
     </button><br/>
-    <button on:click={generateCollectionFile}>
+    <button on:click={() => generateCollectionFile(className, sortingCBvalue, fields, publishFile)}>
     {button2Text}
     </button>
 </div>

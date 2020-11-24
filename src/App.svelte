@@ -1,6 +1,5 @@
 <script>
 import Generator from './Generator.svelte'
-// import Users from './Users.svelte'
 
 // https://github.com/eligrey/FileSaver.js 
 
