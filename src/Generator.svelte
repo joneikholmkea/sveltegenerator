@@ -9,6 +9,8 @@ let className = 'Person'
 let button1Text = 'Download file: '+className+'.svelte'
 let button2Text = 'Download file: '+className+'s.svelte'
 let sortingCBvalue = false;
+let searchChecked = false;
+let searchField = fields[0]
 
 function addNameOfClass(){
         console.log("saved class " + className)
@@ -42,6 +44,22 @@ function publishFile(content, filename){
     var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
     window.saveAs(blob, filename);
 }
+
+function searchToggle(){
+     if(searchChecked){ // reset the value, if checkbox was un-checked
+         searchField = ''
+     }else if(searchField == ''){
+         searchField = fields[0]
+     }
+    console.log("searchField is: " + searchField + " CBvalue " + searchChecked)
+}
+// function selectSearchField(){
+//     //  if(searchChecked){ // reset the value, if checkbox was un-checked
+//     //      searchField = 'empty'
+//     //  }
+//     console.log("searchField is: " + searchField + " CBvalue " + searchChecked)
+// }
+
 </script>
 
 <!-- ###################### -->
@@ -93,8 +111,22 @@ function publishFile(content, filename){
     </div>
     <br/>
     <div id="sortingDIV">
-        <span>Add sorting on each field:&nbsp;&nbsp;&nbsp;</span><input id="sortingCB" type="checkbox" bind:checked={sortingCBvalue} />
+        <span>Add sorting to all fields:&nbsp;&nbsp;&nbsp;</span>
+        <input id="sortingCB" type="checkbox" bind:checked={sortingCBvalue} />
     </div>
+    <br/>
+     <div id="searchDIV">
+        <span>Add search to <strong>one</strong> field:&nbsp;&nbsp;&nbsp;</span>
+        <input id="searchCB" type="checkbox" bind:checked={searchChecked} on:click={searchToggle} />
+        {#if searchChecked}
+            <select id="selectSort" bind:value={searchField} >
+                {#each fields as field}
+                    <option>{field}</option>
+                {/each}
+            </select>
+        {/if}
+    </div>
+    <br/>
 </div>
 <br/>
 <div class="steps">
@@ -103,7 +135,7 @@ function publishFile(content, filename){
     <button on:click={() => generateEntityFile(className, fields, publishFile)}>
     {button1Text}
     </button><br/>
-    <button on:click={() => generateCollectionFile(className, sortingCBvalue, fields, publishFile)}>
+    <button on:click={() => generateCollectionFile(className, sortingCBvalue, fields, searchField, publishFile)}>
     {button2Text}
     </button>
 </div>
@@ -132,7 +164,7 @@ function publishFile(content, filename){
      border-color:black;
 }
 
-#sortingCB{
+#sortingCB, #searchCB{
     transform : scale(2); 
 }
 #sortingDIV{

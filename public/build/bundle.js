@@ -75,6 +75,19 @@ var app = (function () {
     function set_input_value(input, value) {
         input.value = value == null ? '' : value;
     }
+    function select_option(select, value) {
+        for (let i = 0; i < select.options.length; i += 1) {
+            const option = select.options[i];
+            if (option.__value === value) {
+                option.selected = true;
+                return;
+            }
+        }
+    }
+    function select_value(select) {
+        const selected_option = select.querySelector(':checked') || select.options[0];
+        return selected_option && selected_option.__value;
+    }
     function custom_event(type, detail) {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, false, false, detail);
@@ -368,6 +381,10 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
+    function prop_dev(node, property, value) {
+        node[property] = value;
+        dispatch_dev('SvelteDOMSetProperty', { node, property, value });
+    }
     function set_data_dev(text, data) {
         data = '' + data;
         if (text.wholeText === data)
@@ -554,14 +571,37 @@ var app = (function () {
 
     });
 
-    let generateCollectionFile = (className, sortingCBvalue, fields, saveFileFunc)=>{
+    let generateCollectionFile = (className, sortingCBvalue, fields, searchField, saveFileFunc)=>{
 
-        let classN = className.toLowerCase();
-        let src = `
+    let classN = className.toLowerCase();
+    let searchCode = '';
+    let searchPlaceholder = 'search';
+    if(searchField != ''){
+    searchPlaceholder = 'search ' + searchField;
+
+    searchCode = `
+function searchForText(){
+    db.collection('${classN}s').orderBy('${searchField}')
+    .startAt(search)
+    .endAt(search + "\uf8ff")
+    .onSnapshot(data => {
+    ${classN}s = data.docs
+    })
+}
+            
+function clearSearch(){
+    search = ''
+}
+`;
+    }
+
+    let src = `
 <script>
 import {db} from './firestore.js'
 import ${className} from './${className}.svelte'
 let ${classN}s = []
+let search = ''
+let orderByCol = ''
 ${getClassVariables(fields)}
 
 db.collection('${classN}s').orderBy("${fields[0]}").onSnapshot(data => {
@@ -579,6 +619,11 @@ function add${className}(){
     // Firebase will automatically map to relevant names !!
 ${getFieldsToResetAfterAddition(fields)}
 }
+
+${searchCode}
+
+
+
 <\/script>
 
 <!-- ###################### -->
@@ -590,8 +635,15 @@ ${getInputsForAdd(fields)}\t\t<button>Add</button>
     </form>
 </div>
 
-<div>
+<div><h2>Search</h2>
+<form on:submit|preventDefault={searchForText}>
+<input type="text" placeholder="${searchPlaceholder}" bind:value={search}/>
+<button>Search</button>
+<button on:click={clearSearch}>Clear</button>
+</form>
+</div>
 
+<div>
 ${getSortForFields(fields, sortingCBvalue)}
 {#each ${classN}s as ${classN}}
     <${className} id={${classN}.id} ${classN}={${classN}.data()} />
@@ -754,21 +806,27 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[14] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
-    // (90:4) {#each fields as f}
-    function create_each_block(ctx) {
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[21] = list[i];
+    	return child_ctx;
+    }
+
+    // (108:4) {#each fields as f}
+    function create_each_block_1(ctx) {
     	let field_1;
     	let current;
 
     	field_1 = new Field({
-    			props: { fieldName: /*f*/ ctx[14] },
+    			props: { fieldName: /*f*/ ctx[21] },
     			$$inline: true
     		});
 
-    	field_1.$on("delete_field", /*deleteField*/ ctx[8]);
+    	field_1.$on("delete_field", /*deleteField*/ ctx[10]);
 
     	const block = {
     		c: function create() {
@@ -780,7 +838,7 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     		},
     		p: function update(ctx, dirty) {
     			const field_1_changes = {};
-    			if (dirty & /*fields*/ 1) field_1_changes.fieldName = /*f*/ ctx[14];
+    			if (dirty & /*fields*/ 1) field_1_changes.fieldName = /*f*/ ctx[21];
     			field_1.$set(field_1_changes);
     		},
     		i: function intro(local) {
@@ -799,9 +857,139 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(108:4) {#each fields as f}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (121:8) {#if searchChecked}
+    function create_if_block(ctx) {
+    	let select;
+    	let mounted;
+    	let dispose;
+    	let each_value = /*fields*/ ctx[0];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			select = element("select");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(select, "id", "selectSort");
+    			if (/*searchField*/ ctx[6] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[16].call(select));
+    			add_location(select, file$1, 121, 12, 4188);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, select, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select, null);
+    			}
+
+    			select_option(select, /*searchField*/ ctx[6]);
+
+    			if (!mounted) {
+    				dispose = listen_dev(select, "change", /*select_change_handler*/ ctx[16]);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*fields*/ 1) {
+    				each_value = /*fields*/ ctx[0];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (dirty & /*searchField, fields*/ 65) {
+    				select_option(select, /*searchField*/ ctx[6]);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(select);
+    			destroy_each(each_blocks, detaching);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(121:8) {#if searchChecked}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (123:16) {#each fields as field}
+    function create_each_block(ctx) {
+    	let option;
+    	let t_value = /*field*/ ctx[7] + "";
+    	let t;
+    	let option_value_value;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t = text(t_value);
+    			option.__value = option_value_value = /*field*/ ctx[7];
+    			option.value = option.__value;
+    			add_location(option, file$1, 123, 20, 4299);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*fields*/ 1 && t_value !== (t_value = /*field*/ ctx[7] + "")) set_data_dev(t, t_value);
+
+    			if (dirty & /*fields*/ 1 && option_value_value !== (option_value_value = /*field*/ ctx[7])) {
+    				prop_dev(option, "__value", option_value_value);
+    				option.value = option.__value;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(90:4) {#each fields as f}",
+    		source: "(123:16) {#each fields as field}",
     		ctx
     	});
 
@@ -858,7 +1046,7 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     	let t35;
     	let br0;
     	let t36;
-    	let div5;
+    	let div6;
     	let h21;
     	let t38;
     	let p1;
@@ -882,66 +1070,82 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     	let br1;
     	let t50;
     	let div4;
-    	let span;
-    	let input2;
+    	let span0;
     	let t52;
-    	let br2;
+    	let input2;
     	let t53;
-    	let div6;
-    	let h22;
+    	let br2;
+    	let t54;
+    	let div5;
+    	let span1;
     	let t55;
-    	let p3;
-    	let t56;
-    	let i3;
+    	let strong;
+    	let t57;
     	let t58;
+    	let input3;
     	let t59;
-    	let button2;
     	let t60;
-    	let t61;
     	let br3;
-    	let t62;
-    	let button3;
-    	let t63;
-    	let t64;
+    	let t61;
     	let br4;
-    	let t65;
+    	let t62;
     	let div7;
-    	let h23;
+    	let h22;
+    	let t64;
+    	let p3;
+    	let t65;
+    	let i3;
     	let t67;
-    	let p4;
+    	let t68;
+    	let button2;
     	let t69;
-    	let p5;
     	let t70;
+    	let br5;
     	let t71;
+    	let button3;
     	let t72;
     	let t73;
+    	let br6;
     	let t74;
-    	let t75;
-    	let br5;
-    	let t76;
     	let div8;
-    	let h24;
+    	let h23;
+    	let t76;
+    	let p4;
     	let t78;
-    	let p6;
+    	let p5;
+    	let t79;
     	let t80;
-    	let p7;
     	let t81;
     	let t82;
     	let t83;
+    	let t84;
+    	let br7;
+    	let t85;
+    	let div9;
+    	let h24;
+    	let t87;
+    	let p6;
+    	let t89;
+    	let p7;
+    	let t90;
+    	let t91;
+    	let t92;
     	let current;
     	let mounted;
     	let dispose;
-    	let each_value = /*fields*/ ctx[0];
-    	validate_each_argument(each_value);
+    	let each_value_1 = /*fields*/ ctx[0];
+    	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
     	}
 
     	const out = i => transition_out(each_blocks[i], 1, 1, () => {
     		each_blocks[i] = null;
     	});
+
+    	let if_block = /*searchChecked*/ ctx[5] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
@@ -1008,7 +1212,7 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     			t35 = space();
     			br0 = element("br");
     			t36 = space();
-    			div5 = element("div");
+    			div6 = element("div");
     			h21 = element("h2");
     			h21.textContent = "Step 1";
     			t38 = space();
@@ -1042,147 +1246,173 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     			br1 = element("br");
     			t50 = space();
     			div4 = element("div");
-    			span = element("span");
-    			span.textContent = "Add sorting on each field:   ";
-    			input2 = element("input");
+    			span0 = element("span");
+    			span0.textContent = "Add sorting to all fields:   ";
     			t52 = space();
-    			br2 = element("br");
+    			input2 = element("input");
     			t53 = space();
-    			div6 = element("div");
+    			br2 = element("br");
+    			t54 = space();
+    			div5 = element("div");
+    			span1 = element("span");
+    			t55 = text("Add search to ");
+    			strong = element("strong");
+    			strong.textContent = "one";
+    			t57 = text(" field:   ");
+    			t58 = space();
+    			input3 = element("input");
+    			t59 = space();
+    			if (if_block) if_block.c();
+    			t60 = space();
+    			br3 = element("br");
+    			t61 = space();
+    			br4 = element("br");
+    			t62 = space();
+    			div7 = element("div");
     			h22 = element("h2");
     			h22.textContent = "Step 2";
-    			t55 = space();
+    			t64 = space();
     			p3 = element("p");
-    			t56 = text("Download these 2 files, and move them into the ");
+    			t65 = text("Download these 2 files, and move them into the ");
     			i3 = element("i");
     			i3.textContent = "src";
-    			t58 = text(" folder of your project");
-    			t59 = space();
+    			t67 = text(" folder of your project");
+    			t68 = space();
     			button2 = element("button");
-    			t60 = text(/*button1Text*/ ctx[3]);
-    			t61 = space();
-    			br3 = element("br");
-    			t62 = space();
+    			t69 = text(/*button1Text*/ ctx[2]);
+    			t70 = space();
+    			br5 = element("br");
+    			t71 = space();
     			button3 = element("button");
-    			t63 = text(/*button2Text*/ ctx[4]);
-    			t64 = space();
-    			br4 = element("br");
-    			t65 = space();
-    			div7 = element("div");
+    			t72 = text(/*button2Text*/ ctx[3]);
+    			t73 = space();
+    			br6 = element("br");
+    			t74 = space();
+    			div8 = element("div");
     			h23 = element("h2");
     			h23.textContent = "Step 3";
-    			t67 = space();
+    			t76 = space();
     			p4 = element("p");
     			p4.textContent = "Add the following line between <script> </script> tags in your App.svelte file:";
-    			t69 = space();
+    			t78 = space();
     			p5 = element("p");
-    			t70 = text("import ");
-    			t71 = text(/*className*/ ctx[2]);
-    			t72 = text("s from './");
-    			t73 = text(/*className*/ ctx[2]);
-    			t74 = text("s.svelte'");
-    			t75 = space();
-    			br5 = element("br");
-    			t76 = space();
-    			div8 = element("div");
+    			t79 = text("import ");
+    			t80 = text(/*className*/ ctx[1]);
+    			t81 = text("s from './");
+    			t82 = text(/*className*/ ctx[1]);
+    			t83 = text("s.svelte'");
+    			t84 = space();
+    			br7 = element("br");
+    			t85 = space();
+    			div9 = element("div");
     			h24 = element("h2");
     			h24.textContent = "Step 4";
-    			t78 = space();
+    			t87 = space();
     			p6 = element("p");
     			p6.textContent = "Add the following line to your App.svelte file (outside the <script> </script> tags) :";
-    			t80 = space();
+    			t89 = space();
     			p7 = element("p");
-    			t81 = text("<");
-    			t82 = text(/*className*/ ctx[2]);
-    			t83 = text("s/>");
-    			add_location(h20, file$1, 48, 4, 1327);
-    			add_location(p0, file$1, 49, 4, 1347);
+    			t90 = text("<");
+    			t91 = text(/*className*/ ctx[1]);
+    			t92 = text("s/>");
+    			add_location(h20, file$1, 66, 4, 1910);
+    			add_location(p0, file$1, 67, 4, 1930);
     			attr_dev(a0, "href", "https://nodejs.org/en/download/");
-    			add_location(a0, file$1, 51, 29, 1454);
-    			add_location(li0, file$1, 51, 4, 1429);
+    			add_location(a0, file$1, 69, 29, 2037);
+    			add_location(li0, file$1, 69, 4, 2012);
     			attr_dev(a1, "href", "https://www.dropbox.com/s/wbco7n4j835x49x/svelte-app.zip?dl=1");
-    			add_location(a1, file$1, 52, 28, 1541);
-    			add_location(i0, file$1, 52, 128, 1641);
-    			add_location(li1, file$1, 52, 4, 1517);
-    			add_location(i1, file$1, 53, 28, 1690);
-    			add_location(li2, file$1, 55, 12, 1760);
-    			add_location(li3, file$1, 56, 12, 1801);
-    			attr_dev(ul0, "class", "sourcecode svelte-17y07s7");
-    			add_location(ul0, file$1, 54, 8, 1724);
-    			add_location(li4, file$1, 53, 4, 1666);
-    			add_location(li5, file$1, 59, 4, 1858);
+    			add_location(a1, file$1, 70, 28, 2124);
+    			add_location(i0, file$1, 70, 128, 2224);
+    			add_location(li1, file$1, 70, 4, 2100);
+    			add_location(i1, file$1, 71, 28, 2273);
+    			add_location(li2, file$1, 73, 12, 2343);
+    			add_location(li3, file$1, 74, 12, 2384);
+    			attr_dev(ul0, "class", "sourcecode svelte-qn2qtt");
+    			add_location(ul0, file$1, 72, 8, 2307);
+    			add_location(li4, file$1, 71, 4, 2249);
+    			add_location(li5, file$1, 77, 4, 2441);
     			attr_dev(a2, "href", "https://firebase.google.com/docs/web/setup");
-    			add_location(a2, file$1, 60, 17, 1950);
-    			add_location(li6, file$1, 60, 4, 1937);
+    			add_location(a2, file$1, 78, 17, 2533);
+    			add_location(li6, file$1, 78, 4, 2520);
     			attr_dev(a3, "href", "https://www.dropbox.com/s/2afem5lbt5w020y/firestore.js?dl=1");
-    			add_location(a3, file$1, 61, 17, 2047);
-    			add_location(li7, file$1, 61, 4, 2034);
-    			add_location(i2, file$1, 62, 29, 2229);
-    			add_location(li8, file$1, 64, 8, 2288);
-    			attr_dev(ul1, "class", "sourcecode svelte-17y07s7");
-    			add_location(ul1, file$1, 63, 4, 2256);
-    			add_location(li9, file$1, 62, 4, 2204);
+    			add_location(a3, file$1, 79, 17, 2630);
+    			add_location(li7, file$1, 79, 4, 2617);
+    			add_location(i2, file$1, 80, 29, 2812);
+    			add_location(li8, file$1, 82, 8, 2871);
+    			attr_dev(ul1, "class", "sourcecode svelte-qn2qtt");
+    			add_location(ul1, file$1, 81, 4, 2839);
+    			add_location(li9, file$1, 80, 4, 2787);
     			attr_dev(a4, "href", "https://www.netlify.com/");
-    			add_location(a4, file$1, 67, 47, 2385);
-    			add_location(li10, file$1, 67, 4, 2342);
-    			add_location(ul2, file$1, 50, 4, 1420);
+    			add_location(a4, file$1, 85, 47, 2968);
+    			add_location(li10, file$1, 85, 4, 2925);
+    			add_location(ul2, file$1, 68, 4, 2003);
     			attr_dev(div0, "id", "step0");
-    			attr_dev(div0, "class", "steps svelte-17y07s7");
-    			add_location(div0, file$1, 47, 0, 1292);
-    			add_location(br0, file$1, 70, 0, 2458);
-    			add_location(h21, file$1, 72, 4, 2488);
-    			add_location(p1, file$1, 73, 4, 2508);
+    			attr_dev(div0, "class", "steps svelte-qn2qtt");
+    			add_location(div0, file$1, 65, 0, 1875);
+    			add_location(br0, file$1, 88, 0, 3041);
+    			add_location(h21, file$1, 90, 4, 3071);
+    			add_location(p1, file$1, 91, 4, 3091);
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$1, 76, 12, 2661);
-    			add_location(button0, file$1, 77, 12, 2716);
-    			add_location(form0, file$1, 75, 8, 2600);
+    			add_location(input0, file$1, 94, 12, 3244);
+    			add_location(button0, file$1, 95, 12, 3299);
+    			add_location(form0, file$1, 93, 8, 3183);
     			attr_dev(div1, "id", "nameofclass");
-    			add_location(div1, file$1, 74, 4, 2569);
-    			add_location(p2, file$1, 80, 4, 2780);
+    			add_location(div1, file$1, 92, 4, 3152);
+    			add_location(p2, file$1, 98, 4, 3363);
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file$1, 83, 12, 2917);
-    			add_location(button1, file$1, 84, 12, 2968);
-    			add_location(form1, file$1, 82, 8, 2862);
+    			add_location(input1, file$1, 101, 12, 3500);
+    			add_location(button1, file$1, 102, 12, 3551);
+    			add_location(form1, file$1, 100, 8, 3445);
     			attr_dev(div2, "id", "addField");
-    			add_location(div2, file$1, 81, 4, 2834);
+    			add_location(div2, file$1, 99, 4, 3417);
     			attr_dev(div3, "id", "users");
-    			add_location(div3, file$1, 88, 4, 3027);
-    			add_location(br1, file$1, 93, 4, 3159);
-    			add_location(span, file$1, 95, 8, 3199);
+    			add_location(div3, file$1, 106, 4, 3610);
+    			add_location(br1, file$1, 111, 4, 3742);
+    			add_location(span0, file$1, 113, 8, 3782);
     			attr_dev(input2, "id", "sortingCB");
     			attr_dev(input2, "type", "checkbox");
-    			attr_dev(input2, "class", "svelte-17y07s7");
-    			add_location(input2, file$1, 95, 65, 3256);
+    			attr_dev(input2, "class", "svelte-qn2qtt");
+    			add_location(input2, file$1, 114, 8, 3848);
     			attr_dev(div4, "id", "sortingDIV");
-    			attr_dev(div4, "class", "svelte-17y07s7");
-    			add_location(div4, file$1, 94, 4, 3169);
-    			attr_dev(div5, "class", "steps svelte-17y07s7");
-    			add_location(div5, file$1, 71, 0, 2464);
-    			add_location(br2, file$1, 98, 0, 3345);
-    			add_location(h22, file$1, 100, 4, 3375);
-    			add_location(i3, file$1, 101, 54, 3445);
-    			add_location(p3, file$1, 101, 4, 3395);
-    			add_location(button2, file$1, 102, 4, 3487);
-    			add_location(br3, file$1, 104, 13, 3595);
-    			add_location(button3, file$1, 105, 4, 3605);
-    			attr_dev(div6, "class", "steps svelte-17y07s7");
-    			add_location(div6, file$1, 99, 0, 3351);
-    			add_location(br4, file$1, 109, 0, 3741);
-    			add_location(h23, file$1, 111, 4, 3782);
-    			add_location(p4, file$1, 112, 4, 3802);
-    			attr_dev(p5, "class", "sourcecode svelte-17y07s7");
-    			add_location(p5, file$1, 113, 4, 3902);
-    			attr_dev(div7, "id", "step2");
-    			attr_dev(div7, "class", "steps svelte-17y07s7");
-    			add_location(div7, file$1, 110, 0, 3747);
-    			add_location(br5, file$1, 115, 0, 3984);
-    			add_location(h24, file$1, 117, 4, 4025);
-    			add_location(p6, file$1, 118, 4, 4045);
-    			attr_dev(p7, "class", "sourcecode svelte-17y07s7");
-    			add_location(p7, file$1, 119, 4, 4152);
-    			attr_dev(div8, "id", "step3");
-    			attr_dev(div8, "class", "steps svelte-17y07s7");
-    			add_location(div8, file$1, 116, 0, 3990);
+    			attr_dev(div4, "class", "svelte-qn2qtt");
+    			add_location(div4, file$1, 112, 4, 3752);
+    			add_location(br2, file$1, 116, 4, 3934);
+    			add_location(strong, file$1, 118, 28, 3994);
+    			add_location(span1, file$1, 118, 8, 3974);
+    			attr_dev(input3, "id", "searchCB");
+    			attr_dev(input3, "type", "checkbox");
+    			attr_dev(input3, "class", "svelte-qn2qtt");
+    			add_location(input3, file$1, 119, 8, 4055);
+    			attr_dev(div5, "id", "searchDIV");
+    			add_location(div5, file$1, 117, 5, 3945);
+    			add_location(br3, file$1, 128, 4, 4399);
+    			attr_dev(div6, "class", "steps svelte-qn2qtt");
+    			add_location(div6, file$1, 89, 0, 3047);
+    			add_location(br4, file$1, 130, 0, 4412);
+    			add_location(h22, file$1, 132, 4, 4442);
+    			add_location(i3, file$1, 133, 54, 4512);
+    			add_location(p3, file$1, 133, 4, 4462);
+    			add_location(button2, file$1, 134, 4, 4554);
+    			add_location(br5, file$1, 136, 13, 4662);
+    			add_location(button3, file$1, 137, 4, 4672);
+    			attr_dev(div7, "class", "steps svelte-qn2qtt");
+    			add_location(div7, file$1, 131, 0, 4418);
+    			add_location(br6, file$1, 141, 0, 4821);
+    			add_location(h23, file$1, 143, 4, 4862);
+    			add_location(p4, file$1, 144, 4, 4882);
+    			attr_dev(p5, "class", "sourcecode svelte-qn2qtt");
+    			add_location(p5, file$1, 145, 4, 4982);
+    			attr_dev(div8, "id", "step2");
+    			attr_dev(div8, "class", "steps svelte-qn2qtt");
+    			add_location(div8, file$1, 142, 0, 4827);
+    			add_location(br7, file$1, 147, 0, 5064);
+    			add_location(h24, file$1, 149, 4, 5105);
+    			add_location(p6, file$1, 150, 4, 5125);
+    			attr_dev(p7, "class", "sourcecode svelte-qn2qtt");
+    			add_location(p7, file$1, 151, 4, 5232);
+    			attr_dev(div9, "id", "step3");
+    			attr_dev(div9, "class", "steps svelte-qn2qtt");
+    			add_location(div9, file$1, 148, 0, 5070);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1237,122 +1467,140 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     			insert_dev(target, t35, anchor);
     			insert_dev(target, br0, anchor);
     			insert_dev(target, t36, anchor);
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, h21);
-    			append_dev(div5, t38);
-    			append_dev(div5, p1);
-    			append_dev(div5, t40);
-    			append_dev(div5, div1);
+    			insert_dev(target, div6, anchor);
+    			append_dev(div6, h21);
+    			append_dev(div6, t38);
+    			append_dev(div6, p1);
+    			append_dev(div6, t40);
+    			append_dev(div6, div1);
     			append_dev(div1, form0);
     			append_dev(form0, input0);
-    			set_input_value(input0, /*className*/ ctx[2]);
+    			set_input_value(input0, /*className*/ ctx[1]);
     			append_dev(form0, t41);
     			append_dev(form0, button0);
-    			append_dev(div5, t43);
-    			append_dev(div5, p2);
-    			append_dev(div5, t45);
-    			append_dev(div5, div2);
+    			append_dev(div6, t43);
+    			append_dev(div6, p2);
+    			append_dev(div6, t45);
+    			append_dev(div6, div2);
     			append_dev(div2, form1);
     			append_dev(form1, input1);
-    			set_input_value(input1, /*field*/ ctx[1]);
+    			set_input_value(input1, /*field*/ ctx[7]);
     			append_dev(form1, t46);
     			append_dev(form1, button1);
-    			append_dev(div5, t48);
-    			append_dev(div5, div3);
+    			append_dev(div6, t48);
+    			append_dev(div6, div3);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(div3, null);
     			}
 
-    			append_dev(div5, t49);
-    			append_dev(div5, br1);
-    			append_dev(div5, t50);
-    			append_dev(div5, div4);
-    			append_dev(div4, span);
+    			append_dev(div6, t49);
+    			append_dev(div6, br1);
+    			append_dev(div6, t50);
+    			append_dev(div6, div4);
+    			append_dev(div4, span0);
+    			append_dev(div4, t52);
     			append_dev(div4, input2);
-    			input2.checked = /*sortingCBvalue*/ ctx[5];
-    			insert_dev(target, t52, anchor);
-    			insert_dev(target, br2, anchor);
-    			insert_dev(target, t53, anchor);
-    			insert_dev(target, div6, anchor);
-    			append_dev(div6, h22);
-    			append_dev(div6, t55);
-    			append_dev(div6, p3);
-    			append_dev(p3, t56);
-    			append_dev(p3, i3);
-    			append_dev(p3, t58);
-    			append_dev(div6, t59);
-    			append_dev(div6, button2);
-    			append_dev(button2, t60);
-    			append_dev(button2, t61);
+    			input2.checked = /*sortingCBvalue*/ ctx[4];
+    			append_dev(div6, t53);
+    			append_dev(div6, br2);
+    			append_dev(div6, t54);
+    			append_dev(div6, div5);
+    			append_dev(div5, span1);
+    			append_dev(span1, t55);
+    			append_dev(span1, strong);
+    			append_dev(span1, t57);
+    			append_dev(div5, t58);
+    			append_dev(div5, input3);
+    			input3.checked = /*searchChecked*/ ctx[5];
+    			append_dev(div5, t59);
+    			if (if_block) if_block.m(div5, null);
+    			append_dev(div6, t60);
     			append_dev(div6, br3);
-    			append_dev(div6, t62);
-    			append_dev(div6, button3);
-    			append_dev(button3, t63);
-    			insert_dev(target, t64, anchor);
+    			insert_dev(target, t61, anchor);
     			insert_dev(target, br4, anchor);
-    			insert_dev(target, t65, anchor);
+    			insert_dev(target, t62, anchor);
     			insert_dev(target, div7, anchor);
-    			append_dev(div7, h23);
-    			append_dev(div7, t67);
-    			append_dev(div7, p4);
-    			append_dev(div7, t69);
-    			append_dev(div7, p5);
-    			append_dev(p5, t70);
-    			append_dev(p5, t71);
-    			append_dev(p5, t72);
-    			append_dev(p5, t73);
-    			append_dev(p5, t74);
-    			insert_dev(target, t75, anchor);
-    			insert_dev(target, br5, anchor);
-    			insert_dev(target, t76, anchor);
+    			append_dev(div7, h22);
+    			append_dev(div7, t64);
+    			append_dev(div7, p3);
+    			append_dev(p3, t65);
+    			append_dev(p3, i3);
+    			append_dev(p3, t67);
+    			append_dev(div7, t68);
+    			append_dev(div7, button2);
+    			append_dev(button2, t69);
+    			append_dev(button2, t70);
+    			append_dev(div7, br5);
+    			append_dev(div7, t71);
+    			append_dev(div7, button3);
+    			append_dev(button3, t72);
+    			insert_dev(target, t73, anchor);
+    			insert_dev(target, br6, anchor);
+    			insert_dev(target, t74, anchor);
     			insert_dev(target, div8, anchor);
-    			append_dev(div8, h24);
+    			append_dev(div8, h23);
+    			append_dev(div8, t76);
+    			append_dev(div8, p4);
     			append_dev(div8, t78);
-    			append_dev(div8, p6);
-    			append_dev(div8, t80);
-    			append_dev(div8, p7);
-    			append_dev(p7, t81);
-    			append_dev(p7, t82);
-    			append_dev(p7, t83);
+    			append_dev(div8, p5);
+    			append_dev(p5, t79);
+    			append_dev(p5, t80);
+    			append_dev(p5, t81);
+    			append_dev(p5, t82);
+    			append_dev(p5, t83);
+    			insert_dev(target, t84, anchor);
+    			insert_dev(target, br7, anchor);
+    			insert_dev(target, t85, anchor);
+    			insert_dev(target, div9, anchor);
+    			append_dev(div9, h24);
+    			append_dev(div9, t87);
+    			append_dev(div9, p6);
+    			append_dev(div9, t89);
+    			append_dev(div9, p7);
+    			append_dev(p7, t90);
+    			append_dev(p7, t91);
+    			append_dev(p7, t92);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[9]),
-    					listen_dev(form0, "submit", prevent_default(/*addNameOfClass*/ ctx[6]), false, true, false),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[10]),
-    					listen_dev(form1, "submit", prevent_default(/*addField*/ ctx[7]), false, true, false),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[11]),
-    					listen_dev(button2, "click", /*click_handler*/ ctx[12], false, false, false),
-    					listen_dev(button3, "click", /*click_handler_1*/ ctx[13], false, false, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[12]),
+    					listen_dev(form0, "submit", prevent_default(/*addNameOfClass*/ ctx[8]), false, true, false),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[13]),
+    					listen_dev(form1, "submit", prevent_default(/*addField*/ ctx[9]), false, true, false),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[14]),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[15]),
+    					listen_dev(input3, "click", /*searchToggle*/ ctx[11], false, false, false),
+    					listen_dev(button2, "click", /*click_handler*/ ctx[17], false, false, false),
+    					listen_dev(button3, "click", /*click_handler_1*/ ctx[18], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*className*/ 4 && input0.value !== /*className*/ ctx[2]) {
-    				set_input_value(input0, /*className*/ ctx[2]);
+    			if (dirty & /*className*/ 2 && input0.value !== /*className*/ ctx[1]) {
+    				set_input_value(input0, /*className*/ ctx[1]);
     			}
 
-    			if (dirty & /*field*/ 2 && input1.value !== /*field*/ ctx[1]) {
-    				set_input_value(input1, /*field*/ ctx[1]);
+    			if (dirty & /*field*/ 128 && input1.value !== /*field*/ ctx[7]) {
+    				set_input_value(input1, /*field*/ ctx[7]);
     			}
 
-    			if (dirty & /*fields, deleteField*/ 257) {
-    				each_value = /*fields*/ ctx[0];
-    				validate_each_argument(each_value);
+    			if (dirty & /*fields, deleteField*/ 1025) {
+    				each_value_1 = /*fields*/ ctx[0];
+    				validate_each_argument(each_value_1);
     				let i;
 
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     						transition_in(each_blocks[i], 1);
     					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i] = create_each_block_1(child_ctx);
     						each_blocks[i].c();
     						transition_in(each_blocks[i], 1);
     						each_blocks[i].m(div3, null);
@@ -1361,27 +1609,44 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
 
     				group_outros();
 
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
     					out(i);
     				}
 
     				check_outros();
     			}
 
-    			if (dirty & /*sortingCBvalue*/ 32) {
-    				input2.checked = /*sortingCBvalue*/ ctx[5];
+    			if (dirty & /*sortingCBvalue*/ 16) {
+    				input2.checked = /*sortingCBvalue*/ ctx[4];
     			}
 
-    			if (!current || dirty & /*button1Text*/ 8) set_data_dev(t60, /*button1Text*/ ctx[3]);
-    			if (!current || dirty & /*button2Text*/ 16) set_data_dev(t63, /*button2Text*/ ctx[4]);
-    			if (!current || dirty & /*className*/ 4) set_data_dev(t71, /*className*/ ctx[2]);
-    			if (!current || dirty & /*className*/ 4) set_data_dev(t73, /*className*/ ctx[2]);
-    			if (!current || dirty & /*className*/ 4) set_data_dev(t82, /*className*/ ctx[2]);
+    			if (dirty & /*searchChecked*/ 32) {
+    				input3.checked = /*searchChecked*/ ctx[5];
+    			}
+
+    			if (/*searchChecked*/ ctx[5]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block(ctx);
+    					if_block.c();
+    					if_block.m(div5, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+
+    			if (!current || dirty & /*button1Text*/ 4) set_data_dev(t69, /*button1Text*/ ctx[2]);
+    			if (!current || dirty & /*button2Text*/ 8) set_data_dev(t72, /*button2Text*/ ctx[3]);
+    			if (!current || dirty & /*className*/ 2) set_data_dev(t80, /*className*/ ctx[1]);
+    			if (!current || dirty & /*className*/ 2) set_data_dev(t82, /*className*/ ctx[1]);
+    			if (!current || dirty & /*className*/ 2) set_data_dev(t91, /*className*/ ctx[1]);
     		},
     		i: function intro(local) {
     			if (current) return;
 
-    			for (let i = 0; i < each_value.length; i += 1) {
+    			for (let i = 0; i < each_value_1.length; i += 1) {
     				transition_in(each_blocks[i]);
     			}
 
@@ -1401,20 +1666,21 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     			if (detaching) detach_dev(t35);
     			if (detaching) detach_dev(br0);
     			if (detaching) detach_dev(t36);
-    			if (detaching) detach_dev(div5);
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(t52);
-    			if (detaching) detach_dev(br2);
-    			if (detaching) detach_dev(t53);
     			if (detaching) detach_dev(div6);
-    			if (detaching) detach_dev(t64);
+    			destroy_each(each_blocks, detaching);
+    			if (if_block) if_block.d();
+    			if (detaching) detach_dev(t61);
     			if (detaching) detach_dev(br4);
-    			if (detaching) detach_dev(t65);
+    			if (detaching) detach_dev(t62);
     			if (detaching) detach_dev(div7);
-    			if (detaching) detach_dev(t75);
-    			if (detaching) detach_dev(br5);
-    			if (detaching) detach_dev(t76);
+    			if (detaching) detach_dev(t73);
+    			if (detaching) detach_dev(br6);
+    			if (detaching) detach_dev(t74);
     			if (detaching) detach_dev(div8);
+    			if (detaching) detach_dev(t84);
+    			if (detaching) detach_dev(br7);
+    			if (detaching) detach_dev(t85);
+    			if (detaching) detach_dev(div9);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -1445,18 +1711,20 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     	let button1Text = "Download file: " + className + ".svelte";
     	let button2Text = "Download file: " + className + "s.svelte";
     	let sortingCBvalue = false;
+    	let searchChecked = false;
+    	let searchField = fields[0];
 
     	function addNameOfClass() {
     		console.log("saved class " + className);
-    		$$invalidate(3, button1Text = "Download file: " + className + ".svelte");
-    		$$invalidate(4, button2Text = "Download file: " + className + "s.svelte");
+    		$$invalidate(2, button1Text = "Download file: " + className + ".svelte");
+    		$$invalidate(3, button2Text = "Download file: " + className + "s.svelte");
     	}
 
     	function addField() {
     		fields.push(field);
     		$$invalidate(0, fields);
     		console.log("added field " + field);
-    		$$invalidate(1, field = "");
+    		$$invalidate(7, field = "");
     	}
 
     	function deleteField(field) {
@@ -1476,6 +1744,17 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     		}
     	}
 
+    	function searchToggle() {
+    		if (searchChecked) {
+    			// reset the value, if checkbox was un-checked
+    			$$invalidate(6, searchField = "");
+    		} else if (searchField == "") {
+    			$$invalidate(6, searchField = fields[0]);
+    		}
+
+    		console.log("searchField is: " + searchField + " CBvalue " + searchChecked);
+    	}
+
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
@@ -1484,21 +1763,32 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
 
     	function input0_input_handler() {
     		className = this.value;
-    		$$invalidate(2, className);
+    		$$invalidate(1, className);
     	}
 
     	function input1_input_handler() {
     		field = this.value;
-    		$$invalidate(1, field);
+    		$$invalidate(7, field);
     	}
 
     	function input2_change_handler() {
     		sortingCBvalue = this.checked;
-    		$$invalidate(5, sortingCBvalue);
+    		$$invalidate(4, sortingCBvalue);
+    	}
+
+    	function input3_change_handler() {
+    		searchChecked = this.checked;
+    		$$invalidate(5, searchChecked);
+    	}
+
+    	function select_change_handler() {
+    		searchField = select_value(this);
+    		$$invalidate(6, searchField);
+    		$$invalidate(0, fields);
     	}
 
     	const click_handler = () => generateEntityFile(className, fields, publishFile);
-    	const click_handler_1 = () => generateCollectionFile(className, sortingCBvalue, fields, publishFile);
+    	const click_handler_1 = () => generateCollectionFile(className, sortingCBvalue, fields, searchField, publishFile);
 
     	$$self.$capture_state = () => ({
     		Field,
@@ -1511,19 +1801,24 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
     		button1Text,
     		button2Text,
     		sortingCBvalue,
+    		searchChecked,
+    		searchField,
     		addNameOfClass,
     		addField,
     		deleteField,
-    		publishFile
+    		publishFile,
+    		searchToggle
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("fields" in $$props) $$invalidate(0, fields = $$props.fields);
-    		if ("field" in $$props) $$invalidate(1, field = $$props.field);
-    		if ("className" in $$props) $$invalidate(2, className = $$props.className);
-    		if ("button1Text" in $$props) $$invalidate(3, button1Text = $$props.button1Text);
-    		if ("button2Text" in $$props) $$invalidate(4, button2Text = $$props.button2Text);
-    		if ("sortingCBvalue" in $$props) $$invalidate(5, sortingCBvalue = $$props.sortingCBvalue);
+    		if ("field" in $$props) $$invalidate(7, field = $$props.field);
+    		if ("className" in $$props) $$invalidate(1, className = $$props.className);
+    		if ("button1Text" in $$props) $$invalidate(2, button1Text = $$props.button1Text);
+    		if ("button2Text" in $$props) $$invalidate(3, button2Text = $$props.button2Text);
+    		if ("sortingCBvalue" in $$props) $$invalidate(4, sortingCBvalue = $$props.sortingCBvalue);
+    		if ("searchChecked" in $$props) $$invalidate(5, searchChecked = $$props.searchChecked);
+    		if ("searchField" in $$props) $$invalidate(6, searchField = $$props.searchField);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1532,17 +1827,22 @@ ${getInputs(className, fields)}\t<button on:click={delete${className}}>Delete</b
 
     	return [
     		fields,
-    		field,
     		className,
     		button1Text,
     		button2Text,
     		sortingCBvalue,
+    		searchChecked,
+    		searchField,
+    		field,
     		addNameOfClass,
     		addField,
     		deleteField,
+    		searchToggle,
     		input0_input_handler,
     		input1_input_handler,
     		input2_change_handler,
+    		input3_change_handler,
+    		select_change_handler,
     		click_handler,
     		click_handler_1
     	];

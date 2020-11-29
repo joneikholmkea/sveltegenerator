@@ -1,11 +1,34 @@
-export let generateCollectionFile = (className, sortingCBvalue, fields, saveFileFunc)=>{
+export let generateCollectionFile = (className, sortingCBvalue, fields, searchField, saveFileFunc)=>{
 
-    let classN = className.toLowerCase()
-    let src = `
+let classN = className.toLowerCase()
+let searchCode = ''
+let searchPlaceholder = 'search'
+if(searchField != ''){
+searchPlaceholder = 'search ' + searchField
+
+searchCode = `
+function searchForText(){
+    db.collection('${classN}s').orderBy('${searchField}')
+    .startAt(search)
+    .endAt(search + "\uf8ff")
+    .onSnapshot(data => {
+    ${classN}s = data.docs
+    })
+}
+            
+function clearSearch(){
+    search = ''
+}
+`
+}
+
+let src = `
 <script>
 import {db} from './firestore.js'
 import ${className} from './${className}.svelte'
 let ${classN}s = []
+let search = ''
+let orderByCol = ''
 ${getClassVariables(fields)}
 
 db.collection('${classN}s').orderBy("${fields[0]}").onSnapshot(data => {
@@ -23,6 +46,11 @@ function add${className}(){
     // Firebase will automatically map to relevant names !!
 ${getFieldsToResetAfterAddition(fields)}
 }
+
+${searchCode}
+
+
+
 <\/script>
 
 <!-- ###################### -->
@@ -35,7 +63,14 @@ ${getInputsForAdd(fields)}\t\t<button>Add</button>
 </div>
 
 <div>
+<form on:submit|preventDefault={searchForText}>
+<input type="text" placeholder="${searchPlaceholder}" bind:value={search}/>
+<button>Search</button>
+<button on:click={clearSearch}>Clear</button>
+</form>
+</div>
 
+<div>
 ${getSortForFields(fields, sortingCBvalue)}
 {#each ${classN}s as ${classN}}
     <${className} id={${classN}.id} ${classN}={${classN}.data()} />
