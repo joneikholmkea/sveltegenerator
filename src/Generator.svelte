@@ -6,23 +6,42 @@ import {generateEntityFile} from './js/entity.js'
 let fields = ["name", "email"]
 let field = 'Name'
 let className = 'Person'
-let button1Text = 'Download file: '+className+'.svelte'
-let button2Text = 'Download file: '+className+'s.svelte'
 let sortingCBvalue = false;
 let searchChecked = false;
 let searchField = ''
-
-function addNameOfClass(){
-        console.log("saved class " + className)
-        button1Text = 'Download file: '+className+'.svelte'
-        button2Text = 'Download file: '+className+'s.svelte'
-}
+let classMessage = ''
+let fieldMessage = ''
 
 function addField(){
-    fields.push(field)
-    fields = fields
-    console.log("added field " + field)
-    field = ''
+    if (verifyField()){
+        fields.push(field)
+        fields = fields
+        console.log("added field " + field)
+        field = ''
+        fieldMessage = ''
+    }
+}
+
+function verifyClass(){
+    if (/\s/.test(className)) {
+        classMessage = "Found white space in class name"
+    }else if(className.length == 0){
+        classMessage = "Class name must be at least 1 character"
+    }else{
+        classMessage = ''
+    }
+}
+
+function verifyField(){
+ if (/\s/.test(field)) {
+        fieldMessage = "Found white space in field name"
+        return false
+    }else if(field.length == 0){
+        fieldMessage = " Field name must be at least 1 character"
+        return false
+    }
+    fieldMessage = '' 
+    return true
 }
 
 function deleteField(field){
@@ -85,15 +104,15 @@ function searchToggle(){
     <h2>Step 1</h2>
     <p>Enter a class name (e.g. User, Student, Animal): </p>
     <div id="nameofclass">
-        <!-- <form on:submit|preventDefault={addNameOfClass}> -->
-            <input type="text" bind:value={className}>
-        <!-- </form> -->
+            <input type="text" bind:value={className} on:input={() => verifyClass()}>
+            <span class="feedback">{classMessage}</span>
     </div>
     <p>Add fields, (e.g. name, e-mail, address): </p>
     <div id="addField">
         <form on:submit|preventDefault={addField}>
-            <input type="text" bind:value={field}>
+            <input type="text" bind:value={field} on:input={() => verifyField()}>
             <button>Add field</button>
+            <span class="feedback">{fieldMessage}</span>
         </form>
     </div>
 
@@ -124,6 +143,7 @@ function searchToggle(){
 <br/>
 <div class="steps">
     <h2>Step 2</h2>
+    {#if classMessage == ''}
     <p>Download these 2 files, and move them into the <i>src</i> folder of your Svelte project</p>
     <button on:click={() => generateEntityFile(className, fields, publishFile)}>
     Download {className}.svelte
@@ -131,6 +151,9 @@ function searchToggle(){
     <button on:click={() => generateCollectionFile(className, sortingCBvalue, fields, searchField, publishFile)}>
     Download {className}s.svelte
     </button>
+    {:else}
+    <h3>Add a legal class name to continue</h3>
+    {/if}
 </div>
 <br/>
 <div id="step2" class="steps">
@@ -163,6 +186,9 @@ function searchToggle(){
 #sortingDIV{
     margin-bottom: 10px;
     
+}
+.feedback{
+    color: red
 }
 
 
