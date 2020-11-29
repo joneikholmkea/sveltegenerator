@@ -20,6 +20,8 @@ function clearSearch(){
     search = ''
 }
 `
+}else {
+    searchField = fields[0]
 }
 
 let src = `
@@ -31,7 +33,7 @@ let search = ''
 let orderByCol = ''
 ${getClassVariables(fields)}
 
-db.collection('${classN}s').orderBy("${fields[0]}").onSnapshot(data => {
+db.collection('${classN}s').orderBy("${searchField}").onSnapshot(data => {
     ${classN}s = data.docs
 })
 
@@ -45,11 +47,10 @@ function add${className}(){
     db.collection('${classN}s').add({${getFieldListAsString(fields)}})
     // Firebase will automatically map to relevant names !!
 ${getFieldsToResetAfterAddition(fields)}
+    document.getElementById("field0").focus();
 }
 
 ${searchCode}
-
-
 
 <\/script>
 
@@ -125,7 +126,7 @@ function getFieldsToResetAfterAddition(fields){
 function getInputsForAdd(fields){
     let out = ''
     for(let i=0; i<fields.length; i++){
-        out +=  '\t\t<input type="text" placeholder="'+fields[i]+'" bind:value={'+fields[i]+'}>\n'
+        out +=  '\t\t<input type="text" placeholder="'+fields[i]+'" bind:value={'+fields[i]+'} id="field' + i + '">\n'
     }
     return out
 }

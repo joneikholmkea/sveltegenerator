@@ -10,7 +10,7 @@ let button1Text = 'Download file: '+className+'.svelte'
 let button2Text = 'Download file: '+className+'s.svelte'
 let sortingCBvalue = false;
 let searchChecked = false;
-let searchField = fields[0]
+let searchField = ''
 
 function addNameOfClass(){
         console.log("saved class " + className)
@@ -51,14 +51,8 @@ function searchToggle(){
      }else if(searchField == ''){
          searchField = fields[0]
      }
-    console.log("searchField is: " + searchField + " CBvalue " + searchChecked)
 }
-// function selectSearchField(){
-//     //  if(searchChecked){ // reset the value, if checkbox was un-checked
-//     //      searchField = 'empty'
-//     //  }
-//     console.log("searchField is: " + searchField + " CBvalue " + searchChecked)
-// }
+
 
 </script>
 
@@ -91,10 +85,9 @@ function searchToggle(){
     <h2>Step 1</h2>
     <p>Enter a class name (e.g. User, Student, Animal): </p>
     <div id="nameofclass">
-        <form on:submit|preventDefault={addNameOfClass}>
+        <!-- <form on:submit|preventDefault={addNameOfClass}> -->
             <input type="text" bind:value={className}>
-            <button>Save Class name</button>
-        </form>
+        <!-- </form> -->
     </div>
     <p>Add fields, (e.g. name, e-mail, address): </p>
     <div id="addField">
@@ -131,12 +124,12 @@ function searchToggle(){
 <br/>
 <div class="steps">
     <h2>Step 2</h2>
-    <p>Download these 2 files, and move them into the <i>src</i> folder of your project</p>
+    <p>Download these 2 files, and move them into the <i>src</i> folder of your Svelte project</p>
     <button on:click={() => generateEntityFile(className, fields, publishFile)}>
-    {button1Text}
+    Download {className}.svelte
     </button><br/>
     <button on:click={() => generateCollectionFile(className, sortingCBvalue, fields, searchField, publishFile)}>
-    {button2Text}
+    Download {className}s.svelte
     </button>
 </div>
 <br/>
